@@ -30,7 +30,7 @@ Additional Ubuntu packages:
 * python-werkzeug
 
 Wiki article parser
-——————-
+
 Article parser works in 2 steps:
 
 1. Extracts articles from Wikipedia dumps
@@ -65,7 +65,7 @@ $ python parse_wiki_dumps.py -d ~/temp/wikipedia_dump/ -l pl -v
 
 
 Wikipedia aligner
-—————–
+
 Aligner can be used when article extracted from dumps.
 Aligner takes article pairs for given language pair, aligns text and saves
 parallel corpora to 2 files. Option „-s” can be used to limit number of symbols
@@ -80,7 +80,7 @@ Example command:
 $ python align.py -o wikipedia -l en-pl -v
 
 Euronews crawler
-—————-
+
 Crawler finds links to articles using Euronews.com archive
 http://euronews.com/2004/, and in parallel extracts and saves article texts to
 DB.
@@ -91,12 +91,12 @@ Example command:
 $ python parse_euronews.py -l en,pl -v
 
 Euronews aligner
-—————-
+
 Starting aligner for Euronews articles:
 $ python align.py -o euronews -l en-pl -v
 
 Saving articles in plain text
-—————————–
+
 Script „save_plain_text.py” can be used to save all articles in plain text
 format, it accepts path for saving articles, languages of articles to be saved,
 and source of articles (euronews, wikipedia).
@@ -107,7 +107,7 @@ Example command:
 $ python save_plain_text.py -l en,pl -r [path] -o euronews
 
 Yalign selection – TUNING Script
-—————-
+
 This script tries random parameters for model of yalign in order to get best
 parameters for aligning provided text samples.
 
