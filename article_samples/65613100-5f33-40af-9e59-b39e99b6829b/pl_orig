@@ -1,0 +1,13 @@
+Biegunowa punktu P względem okręgu "o" o środku O≠P – prosta przechodząca przez obraz punktu P przy inwersji względem "o" i prostopadła do OP.
+=== Konstrukcja ===
+1. Konstrukcja punktu inwersyjnego do P.
+2. Konstrukcja prostej prostopadłej do OP przechodzącej przez ten punkt.
+=== Wzajemność biegunowych ===
+Jeśli punkt A leży na biegunowej B względem "o", to B leży na biegunowej A względem "o".
+=== Dowód ===
+Spełnione są zależności:
+: formula_1
+: formula_2
+Dzieląc stronami uzyskujemy:
+: formula_3
+a zatem (ze względu na wspólność kąta AOB) trójkąty OAB' i OBA' są podobne (bok, kąt, bok), więc kąt OB'A jest prosty i odcinek B'A zawiera się w biegunowej B.

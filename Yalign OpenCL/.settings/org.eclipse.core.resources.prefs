@@ -1,0 +1,17 @@
+eclipse.preferences.version=1
+encoding//scripts/yalign-align=utf-8
+encoding//scripts/yalign-evaluate-precision=utf-8
+encoding//scripts/yalign-train=utf-8
+encoding//yalign/__init__.py=utf-8
+encoding//yalign/datatypes.py=utf-8
+encoding//yalign/evaluation.py=utf-8
+encoding//yalign/input_conversion.py=utf-8
+encoding//yalign/sentencepairscore.py=utf-8
+encoding//yalign/sequencealigner.py=utf-8
+encoding//yalign/sequencealignernew.py=utf-8
+encoding//yalign/sequencealignernwgpu.py=utf-8
+encoding//yalign/svm.py=utf-8
+encoding//yalign/tokenizers.py=utf-8
+encoding//yalign/train_data_generation.py=utf-8
+encoding//yalign/wordpairscore.py=utf-8
+encoding//yalign/yalignmodel.py=utf-8
