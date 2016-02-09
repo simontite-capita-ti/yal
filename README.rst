@@ -4,11 +4,17 @@ About
 Yalign is a tool for extracting parallel sentences from comparable corpora. 
 
 This page contains native Yalign tool with the following enhancements:
+
 - sequence alignment is done using Needleman-Wunsch algorithm for better accuracy
+
 - performance is improved using OpenCL GPU acceleration
+
 - Yalign automatic parameter tuning algorithm implemented - better accuracy of mining
+
 - tool can support multi-threading for large scale mining
+
 - automatic Wikipedia and Euronews.com portal processing
+
 - easy to add other data sources
 
 
@@ -42,11 +48,12 @@ dump files should be downloaded – articles and language link dumps, here is
 examples:
 
 PL:
-* http://dumps.wikimedia.org/plwiki/latest/plwiki-latest-pages-articles.xml.bz2
-* http://dumps.wikimedia.org/plwiki/latest/plwiki-latest-langlinks.sql.gz
+http://dumps.wikimedia.org/plwiki/latest/plwiki-latest-pages-articles.xml.bz2
+http://dumps.wikimedia.org/plwiki/latest/plwiki-latest-langlinks.sql.gz
+
 EN:
-* http://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2
-* http://dumps.wikimedia.org/enwiki/latest/enwiki-latest-langlinks.sql.gz
+http://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2
+http://dumps.wikimedia.org/enwiki/latest/enwiki-latest-langlinks.sql.gz
 
 IMPORTANT NOTE: English dumps after extraction will require about 50 Gb of free
 space. During parsing parser can require up to 8 Gb ram.
