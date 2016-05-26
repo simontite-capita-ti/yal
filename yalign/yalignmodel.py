@@ -30,7 +30,7 @@ def basic_model(corpus_filepath, word_scores_filepath,
 
     `corpus_filepath` is the path to a parallel corpus used for training,
     it can be:
-        - a csv file with two sentences and alignement information, or
+        - a csv file with two sentences and alignment information, or
         - a tmx file with correct alignments (a regular parallel corpus), or
         - a text file with interleaved sentences (one line in language A, the
           next in language B)
@@ -38,8 +38,8 @@ def basic_model(corpus_filepath, word_scores_filepath,
     `word_scores_filepath` is the path to a csv file (possibly gzipped) with
     word dictionary data. (for ex. "house,casa,0.91").
 
-    `lang_a` and `lang_b` are requiered for the tokenizer in the case of a tmx
-    file. In the other cases is not necesary because it's assumed that the
+    `lang_a` and `lang_b` are required for the tokenizer in the case of a tmx
+    file. In the other cases is not necessary because it's assumed that the
     words are already tokenized.
     """
     # Word score

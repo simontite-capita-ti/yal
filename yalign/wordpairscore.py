@@ -17,6 +17,7 @@ class WordPairScore(ScoreFunction):
         Requires a csv file where each line contains:
         {word_a},{word_b},{translation probability of a to b}
         """
+        csv.field_size_limit(1000000000) # By default this is 131072, which is nowhere near enough.
         super(WordPairScore, self).__init__(0, 1)
         self.filepath = dictionary_file
         self.translations = {}
@@ -32,7 +33,11 @@ class WordPairScore(ScoreFunction):
         input_file = self._open_file()
         data = csv.reader(input_file)
         for elem in data:
-            word_a, word_b, prob = elem
+            try:
+                word_a, word_b, prob = elem
+            except Exception as e:
+                e.args += (elem,)
+                raise
             word_a = word_a.decode("utf-8").lower()
             word_b = word_b.decode("utf-8").lower()
             if word_a not in self.translations:
