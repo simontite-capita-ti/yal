@@ -1,0 +1,51 @@
+In geometry, the terms pole and polar are used to describe a point and a line that have a unique reciprocal relationship with respect to a given conic section. If the point lies on the conic section, its polar is the tangent line to the conic section at that point.
+For a given circle, reciprocation in a circle means to transform each point in the plane into its polar line and each line in the plane into its pole.
+==Special case of circles==
+The pole of a line "L" in a circle "C" is a point P that is the inversion in "C" of the point Q on "L" that is closest to the center of the circle. Conversely, the polar line (or polar) of a point P in a circle "C" is the line "L" such that its closest point Q to the circle is the inversion of P in "C".
+The relationship between poles and polars is reciprocal. Thus, if a point Q is on the polar line "A" of a point P, then the point P must lie on the polar line "B" of the point Q. The two polar lines "A" and "B" need not be parallel.
+There is another description of the polar line of a point P in the case that it lies outside the circle "C". In this case, there are two lines through P which are tangent to the circle, and the polar of P is the line joining the two points of tangency (not shown here). This shows that pole and polar line are concepts in the projective geometry of the plane and generalize with any nonsingular conic in the place of the circle "C".
+==Reciprocation and projective duality==
+The concepts of "a pole and its polar line" were advanced in projective geometry. For instance, the polar line can be viewed as the set of projective harmonic conjugates of a given point, the pole, with respect to a conic. The operation of replacing every point by its polar and vice versa is sometimes known as reciprocation.
+==General conic sections==
+The concepts of pole, polar and reciprocation can be generalized from circles to other conic sections which are the ellipse, hyperbola and parabola. This generalization is possible because conic sections result from a reciprocation of a circle in another circle, and the properties involved, such as incidence and the cross-ratio, are preserved under all projective transformations.
+=== Calculating the polar of a point ===
+A general conic section may be written as a second-degree equation in the Cartesian coordinates ("x", "y") of the plane
+:formula_1
+where "A""xx", "A""xy", "A""yy", "B""x", "B""y", and "C" are the constants defining the equation. For such a conic section, the polar line to a given pole point (ξ, η) is defined by the equation
+:formula_2
+where "D", "E" and "F" are likewise constants that depend on the pole coordinates (ξ, η)
+:formula_3
+:formula_4
+:formula_5
+=== Calculating the pole of a line ===
+The pole of the line formula_6, relative to the non-degenerated conic section
+:formula_1
+can be calculated in two steps.
+First, calculate the numbers x, y and z from
+:formula_8
+Now, the pole is the point with coordinates formula_9
+==Properties==
+Poles and polars have several useful properties.
+If a point P lies on a line "l", then the pole L of the line "l" lies on the polar "p" of point P.
+If a point P moves along a line "l", its polar "p" rotates about the pole L of the line "l".
+If two tangent lines can be drawn from a pole to the conic section, then its polar passes through both tangent points.
+If a point lies on the conic section, its polar is the tangent through this point to the conic section.
+If a point P lies on its own polar line, then P is on the conic section.
+Each line has, with respect to a non-degenerated conic section, exactly one pole.
+==Applications==
+Poles and polars were defined by Joseph Diaz Gergonne and play an important role in his solution of the problem of Apollonius.
+In planar dynamics a pole is a center of rotation, the polar is the force line of action and the conic is the mass-inertia matrix. The pole-polar relationship is used to define the center of percussion of a planar rigid body. If the pole is the hinge point, then the polar is the percussion line of action as described in planar screw theory.
+==See also==
+* Dual polygon
+* Dual polyhedron
+* Projective geometry
+* Projective harmonic conjugates
+* Polar curve
+* Pascal line formula
+==Bibliography==
+* The paperback version published by Dover Publications has the ISBN 978-0-486-41147-7.
+==References==
+==External links==
+* Interactive animation with multiple poles and polars at Cut-the-Knot
+* Interactive animation with one pole and its polar
+* Tutorial at Math-abundance
