@@ -68,8 +68,7 @@ if __name__ == "__main__":
     document_a = read_document(args['<document_a>'], lang_a)
     document_b = read_document(args['<document_b>'], lang_b)
     mode = args['--mode']
-    model = YalignModel.load(model_path)
-    model.mode = mode
+    model = YalignModel.load(model_path, mode)
     pairs = model.align(document_a, document_b)
 
     if output_format == "tmx":

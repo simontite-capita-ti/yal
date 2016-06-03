@@ -1,6 +1,8 @@
 *.pyc
 docs/_build
 .idea
-*.egg-info
+*.egg-info/*
 *~
+*.B1
+*.gz
 

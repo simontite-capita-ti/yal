@@ -2,6 +2,7 @@ LICENSE
 MANIFEST.in
 README.rst
 requirements.txt
+setup.py
 docs/datatypes.rst
 docs/evaluation.rst
 docs/implementation.rst
@@ -21,6 +22,7 @@ docs/wordpairscore.rst
 docs/yalign.rst
 docs/yalignmodel.rst
 scripts/yalign-align
+scripts/yalign-align~
 scripts/yalign-evaluate-alignment
 scripts/yalign-evaluate-correlation
 scripts/yalign-evaluate-model
@@ -42,6 +44,8 @@ yalign/evaluation.py
 yalign/input_conversion.py
 yalign/sentencepairscore.py
 yalign/sequencealigner.py
+yalign/sequencealignernew.py
+yalign/sequencealignernwgpu.py
 yalign/svm.py
 yalign/tokenizers.py
 yalign/train_data_generation.py
