@@ -11,7 +11,6 @@ DIAG = 0
 UP = 1 
 LEFT = 2
 
-
 class CL:
     def __init__(self):
         cl.CommandQueue
@@ -19,6 +18,7 @@ class CL:
         my_gpu_devices = [platform[0].get_devices(device_type=cl.device_type.GPU)[0]]
         self.ctx = cl.Context(devices=my_gpu_devices)
         self.queue = cl.CommandQueue(self.ctx)
+
     def loadProgram(self, filename):
         #read in the OpenCL source file as a string
         f = open(filename, 'r')
@@ -26,6 +26,7 @@ class CL:
       
         #create the program
         self.program = cl.Program(self.ctx, fstr).build()
+
     def process(self,  s_matrix, n, m):
         mf = cl.mem_flags
         #initialize client side (CPU) arrays
@@ -44,10 +45,10 @@ class CL:
                                           np.int32(t_m), np.int32(d))
              
 #        cl.enqueue_read_buffer(self.queue, self.s_buf, s).wait()
-	cl.enqueue_copy(self.queue, s, self.s_buf)
+        cl.enqueue_copy(self.queue, s, self.s_buf)
         self.queue.finish() 
         self.s_buf.release()
-	self.s_matrix_buf.release()
+        self.s_matrix_buf.release()
         return s
 
 class SequenceAlignerNWGPU(object):
