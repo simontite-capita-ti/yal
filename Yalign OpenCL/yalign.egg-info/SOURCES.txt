@@ -22,7 +22,6 @@ docs/wordpairscore.rst
 docs/yalign.rst
 docs/yalignmodel.rst
 scripts/yalign-align
-scripts/yalign-align~
 scripts/yalign-evaluate-alignment
 scripts/yalign-evaluate-correlation
 scripts/yalign-evaluate-model
