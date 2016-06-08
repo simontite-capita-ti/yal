@@ -2,4 +2,8 @@
 docs/_build
 *~
 .idea
+*.egg-info
+*.B1
+*.gz
+
 
