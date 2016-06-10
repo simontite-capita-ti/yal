@@ -6,4 +6,6 @@ docs/_build
 *~
 *.B1*
 *.gz
+build
+dist
 
