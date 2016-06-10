@@ -3,7 +3,7 @@ docs/_build
 *~
 .idea
 *.egg-info
-*.B1
+*.B1*
 *.gz
-
-
+build
+dist
