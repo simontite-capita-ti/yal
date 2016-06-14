@@ -114,11 +114,11 @@ class YalignModel(object):
         model.document_pair_aligner = pickle.load(open(aligner))
         model.document_pair_aligner.penalty = model.metadata.penalty
         model.threshold = model.metadata.threshold
-	model.mode = mode
+        model.mode = mode
         if mode == 'new' :
-        	model.document_pair_aligner_nw = SequenceAlignerNW(model.document_pair_aligner.score , model.threshold)
-	if mode == 'gpu' :
-        	model.document_pair_aligner_gpu= SequenceAlignerNWGPU(model.document_pair_aligner.score , model.threshold)
+            model.document_pair_aligner_nw = SequenceAlignerNW(model.document_pair_aligner.score , model.threshold)
+        if mode == 'gpu' :
+            model.document_pair_aligner_gpu = SequenceAlignerNWGPU(model.document_pair_aligner.score, model.threshold)
         return model
 
     @property
@@ -140,12 +140,12 @@ class YalignModel(object):
         alignments = None
         if self.mode == 'new' :
             alignments = self.document_pair_aligner_nw(document_a, document_b)
-        elif self.mode == 'old':    
+        elif self.mode == 'old':
             alignments = self.align_indexes(document_a, document_b)
         elif self.mode == 'gpu':
             alignments = self.document_pair_aligner_gpu(document_a, document_b)
-     
-        
+
+
         return [(document_a[a], document_b[b]) for a, b in alignments]
 
     def align_indexes(self, document_a, document_b):

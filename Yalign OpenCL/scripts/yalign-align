@@ -37,7 +37,7 @@ from docopt import docopt
 from yalign.yalignmodel import YalignModel
 from yalign.input_conversion import text_to_document, html_to_document
 from yalign.utils import write_tmx, read_from_url
-#import time
+
 
 def read_document(filename, language):
     if filename.startswith('http'):
@@ -59,7 +59,6 @@ def write_plaintext(stream, pairs):
 if __name__ == "__main__":
     from sys import stdout
     args = docopt(__doc__)
-#    start_time = time.time()
     output_format = args['--output-format'].lower()
     lang_a = args['--lang-a']
     lang_b = args['--lang-b']
