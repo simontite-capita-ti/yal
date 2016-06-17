@@ -6,6 +6,7 @@ import numpy as np
 import pyopencl as cl
 from pyopencl import array
 from clalign import Clp
+import sys
 
 # the three directions you can go in the traceback:
 DIAG = 0 
@@ -29,7 +30,9 @@ class CL:
         if len(device_list) == 0:
             device_list = platform[0].get_devices(device_type=cl.device_type.ALL)
         my_gpu_devices = [device_list[0]]
+
         self.ctx = cl.Context(devices=my_gpu_devices)
+        #sys.stderr.write('Devices:\n' + '\n' + my_gpu_devices[0].__name__ + '\n')
         self.queue = cl.CommandQueue(self.ctx)
 
     def loadProgram(self, filename):

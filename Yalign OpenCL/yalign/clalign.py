@@ -1,5 +1,5 @@
 class Clp:
-    program = """
+    program = """//CL//
     #define DIAG 0
     #define UP 1
     #define LEFT 2
