@@ -5,6 +5,7 @@ Module for handling sequence alignment.
 import numpy as np
 import pyopencl as cl
 from pyopencl import array
+from clalign import Clp
 
 # the three directions you can go in the traceback:
 DIAG = 0 
@@ -13,19 +14,32 @@ LEFT = 2
 
 class CL:
     def __init__(self):
-        cl.CommandQueue
+
+        # The following krz original line does nothing
+        # cl.CommandQueue
+
+        # The following krz original code breaks on a machine with no devices of type .GPU, however on the development
+        # system there is a device called 'Intel Core i5.3210M CPU @ 2.50 GHz' on 'AMD Accelerated Parallel Processing',
+        # which works with adventures_in_opencl/python/part1/main.py.
+        # platform = cl.get_platforms()
+        # my_gpu_devices = [platform[0].get_devices(device_type=cl.device_type.GPU)[0]] # This line causes error if empty list returned.
+
         platform = cl.get_platforms()
-        my_gpu_devices = [platform[0].get_devices(device_type=cl.device_type.GPU)[0]]
+        device_list = platform[0].get_devices(device_type=cl.device_type.GPU)
+        if len(device_list) == 0:
+            device_list = platform[0].get_devices(device_type=cl.device_type.ALL)
+        my_gpu_devices = [device_list[0]]
         self.ctx = cl.Context(devices=my_gpu_devices)
         self.queue = cl.CommandQueue(self.ctx)
 
     def loadProgram(self, filename):
         #read in the OpenCL source file as a string
-        f = open(filename, 'r')
-        fstr = "".join(f.readlines())
+        #f = open(filename, 'r')
+        #fstr = "".join(f.readlines())
       
         #create the program
-        self.program = cl.Program(self.ctx, fstr).build()
+        #self.program = cl.Program(self.ctx, fstr).build()
+        self.program = cl.Program(self.ctx, Clp.program).build()
 
     def process(self,  s_matrix, n, m):
         mf = cl.mem_flags
