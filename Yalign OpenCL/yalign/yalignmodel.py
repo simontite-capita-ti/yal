@@ -102,7 +102,7 @@ class YalignModel(object):
         self.mode = 'old'
 
     @classmethod
-    def load(cls, model_directory,mode):
+    def load(cls, model_directory, mode):
         """
         This method to loads an existing YalignModel from the path to the
         folder where it's contained.
