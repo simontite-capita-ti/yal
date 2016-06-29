@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>yalign.sequencealigner &mdash; Yalign 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Yalign 0.1.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for yalign.sequencealigner</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for handling sequence alignment.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">simpleai.search</span> <span class="kn">import</span> <span class="n">SearchProblem</span><span class="p">,</span> <span class="n">astar</span>
+
+
+<div class="viewcode-block" id="SequenceAligner"><a class="viewcode-back" href="../../sequencealigner.html#yalign.sequencealigner.SequenceAligner">[docs]</a><span class="k">class</span> <span class="nc">SequenceAligner</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Aligns two sequences.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">gap_penalty</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">score</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">penalty</span> <span class="o">=</span> <span class="n">gap_penalty</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">penalty</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns an alignment of sequences `xs` and `ys` such that it maximizes</span>
+<span class="sd">        the sum of weights as given by the `score` function and the</span>
+<span class="sd">        `gap_penalty`.</span>
+<span class="sd">        The aligment format is a list of tuples `(i, j, cost)` such that:</span>
+<span class="sd">            `i` and `j` are indexes of elements in `xs` and `ys` respectively.</span>
+<span class="sd">            The alignment weight is sum(cost for i, j, cost in alignment).</span>
+<span class="sd">            if `i == None` then `j` is not aligned to anything (is a gap).</span>
+<span class="sd">            if `j == None` then `i` is not aligned to anything (is a gap).</span>
+<span class="sd">        If `minimize` is `True` this function minimizes the sum of the weights</span>
+<span class="sd">        instead.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">score</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span>
+        <span class="k">if</span> <span class="n">penalty</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">penalty</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">penalty</span>
+        <span class="n">problem</span> <span class="o">=</span> <span class="n">SequenceAlignmentSearchProblem</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">penalty</span><span class="p">)</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="n">astar</span><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">graph_search</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="p">[</span><span class="n">action</span> <span class="k">for</span> <span class="n">action</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">path</span><span class="p">()[</span><span class="mi">1</span><span class="p">:]]</span>
+        <span class="k">return</span> <span class="n">path</span></div>
+
+
+<div class="viewcode-block" id="SequenceAlignmentSearchProblem"><a class="viewcode-back" href="../../sequencealigner.html#yalign.sequencealigner.SequenceAlignmentSearchProblem">[docs]</a><span class="k">class</span> <span class="nc">SequenceAlignmentSearchProblem</span><span class="p">(</span><span class="n">SearchProblem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Represents and manipulates the search space for a sequence</span>
+<span class="sd">    alignment problem. Used by simpleai&#39;s graph search algorithm.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">gap_penalty</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SequenceAlignmentSearchProblem</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xs</span> <span class="o">=</span> <span class="n">xs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ys</span> <span class="o">=</span> <span class="n">ys</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">=</span> <span class="n">score</span>
+        <span class="k">if</span> <span class="n">gap_penalty</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;gap penalty cannot be negative&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">D</span> <span class="o">=</span> <span class="n">gap_penalty</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ys</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">goal</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SequenceAlignmentSearchProblem.actions"><a class="viewcode-back" href="../../sequencealigner.html#yalign.sequencealigner.SequenceAlignmentSearchProblem.actions">[docs]</a>    <span class="k">def</span> <span class="nf">actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the next actions from a given state.</span>
+<span class="sd">        A state is an alignment (tuple of indexes from either sequence).</span>
+<span class="sd">        An action is a the next alignment to consider with a score for</span>
+<span class="sd">        that alignment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="ow">and</span> <span class="n">j</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="p">:</span>
+            <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">ys</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">w</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;cannot have negative weights&quot;</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">j</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SequenceAlignmentSearchProblem.result"><a class="viewcode-back" href="../../sequencealigner.html#yalign.sequencealigner.SequenceAlignmentSearchProblem.result">[docs]</a>    <span class="k">def</span> <span class="nf">result</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the next state for this state, action pair.&quot;&quot;&quot;</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">cost</span> <span class="o">=</span> <span class="n">action</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="k">if</span> <span class="n">j</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="k">return</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span></div>
+
+<div class="viewcode-block" id="SequenceAlignmentSearchProblem.cost"><a class="viewcode-back" href="../../sequencealigner.html#yalign.sequencealigner.SequenceAlignmentSearchProblem.cost">[docs]</a>    <span class="k">def</span> <span class="nf">cost</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state1</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">state2</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Cost of this action. &quot;&quot;&quot;</span>
+        <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">cost</span> <span class="o">=</span> <span class="n">action</span>
+        <span class="k">return</span> <span class="n">cost</span></div>
+
+<div class="viewcode-block" id="SequenceAlignmentSearchProblem.is_goal"><a class="viewcode-back" href="../../sequencealigner.html#yalign.sequencealigner.SequenceAlignmentSearchProblem.is_goal">[docs]</a>    <span class="k">def</span> <span class="nf">is_goal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Are we finished aligning? True when our when state is the</span>
+<span class="sd">        alignment (N, M) where N and M are the lengths of the</span>
+<span class="sd">        two sequences.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">state</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">goal</span></div>
+
+<div class="viewcode-block" id="SequenceAlignmentSearchProblem.heuristic"><a class="viewcode-back" href="../../sequencealigner.html#yalign.sequencealigner.SequenceAlignmentSearchProblem.heuristic">[docs]</a>    <span class="k">def</span> <span class="nf">heuristic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A heuristic for A* type searches. Currently we return</span>
+<span class="sd">        The distance of this state from the diagonal in a N*M</span>
+<span class="sd">        lattice where N and M are the lengths of the two sequences.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">-</span> <span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">-</span> <span class="n">j</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="c1"># To test that this bound does not overestimates the cost try</span>
+        <span class="c1"># uncommenting the multiplication and re-running the tests.</span>
+        <span class="k">return</span> <span class="n">n</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">D</span>  <span class="c1"># * 1.001</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013, Gonzalo García Berrotarán, Rafael Carrascosa, Andrew Vine.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
+    </div>
+  </body>
+</html>

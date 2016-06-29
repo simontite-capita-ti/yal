@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>yalign.utils &mdash; Yalign 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Yalign 0.1.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for yalign.utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for miscellaneous functions.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">string</span> <span class="kn">import</span> <span class="n">letters</span>
+<span class="kn">from</span> <span class="nn">lxml.builder</span> <span class="kn">import</span> <span class="n">ElementMaker</span>
+<span class="kn">from</span> <span class="nn">lxml</span> <span class="kn">import</span> <span class="n">etree</span>
+
+
+<div class="viewcode-block" id="host_and_page"><a class="viewcode-back" href="../../utils.html#yalign.utils.host_and_page">[docs]</a><span class="k">def</span> <span class="nf">host_and_page</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Splits a `url` into the hostname and the rest of the url. &quot;&quot;&quot;</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;//&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    <span class="n">host</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">page</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+    <span class="k">return</span> <span class="n">host</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">page</span></div>
+
+
+<div class="viewcode-block" id="read_from_url"><a class="viewcode-back" href="../../utils.html#yalign.utils.read_from_url">[docs]</a><span class="k">def</span> <span class="nf">read_from_url</span><span class="p">(</span><span class="n">url</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; GET this `url` and read the response. &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">requests</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span></div>
+
+
+<div class="viewcode-block" id="write_tmx"><a class="viewcode-back" href="../../utils.html#yalign.utils.write_tmx">[docs]</a><span class="k">def</span> <span class="nf">write_tmx</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">sentence_pairs</span><span class="p">,</span> <span class="n">language_a</span><span class="p">,</span> <span class="n">language_b</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Writes the SentencePair&#39;s out in tmx format, &quot;&quot;&quot;</span>
+    <span class="n">maker</span> <span class="o">=</span> <span class="n">ElementMaker</span><span class="p">()</span>
+    <span class="n">token</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">letters</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">50</span><span class="p">))</span>
+    <span class="n">token_a</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">letters</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">50</span><span class="p">))</span>
+    <span class="n">token_b</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">letters</span> <span class="o">*</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">50</span><span class="p">))</span>
+
+    <span class="n">header</span> <span class="o">=</span> <span class="n">maker</span><span class="o">.</span><span class="n">header</span><span class="p">(</span><span class="n">srclang</span><span class="o">=</span><span class="n">language_a</span><span class="p">,</span>
+                          <span class="n">segtype</span><span class="o">=</span><span class="s2">&quot;sentence&quot;</span><span class="p">,</span>
+                          <span class="n">creationtool</span><span class="o">=</span><span class="s2">&quot;MTrans&quot;</span><span class="p">,</span>
+                          <span class="n">datatype</span><span class="o">=</span><span class="s2">&quot;PlainText&quot;</span><span class="p">)</span>
+    <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&lt;?xml version=</span><span class="se">\&quot;</span><span class="s2">1.0</span><span class="se">\&quot;</span><span class="s2"> ?&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&lt;!DOCTYPE tmx SYSTEM </span><span class="se">\&quot;</span><span class="s2">tmx14.dtd</span><span class="se">\&quot;</span><span class="s2">&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&lt;tmx version=</span><span class="se">\&quot;</span><span class="s2">1.4</span><span class="se">\&quot;</span><span class="s2">&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">etree</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+    <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&lt;body&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">sentence_a</span><span class="p">,</span> <span class="n">sentence_b</span> <span class="ow">in</span> <span class="n">sentence_pairs</span><span class="p">:</span>
+        <span class="n">src_tuv</span> <span class="o">=</span> <span class="n">maker</span><span class="o">.</span><span class="n">tuv</span><span class="p">({</span><span class="n">token</span><span class="p">:</span> <span class="n">language_a</span><span class="p">},</span> <span class="n">maker</span><span class="o">.</span><span class="n">seg</span><span class="p">(</span><span class="n">token_a</span><span class="p">))</span>
+        <span class="n">tgt_tuv</span> <span class="o">=</span> <span class="n">maker</span><span class="o">.</span><span class="n">tuv</span><span class="p">({</span><span class="n">token</span><span class="p">:</span> <span class="n">language_b</span><span class="p">},</span> <span class="n">maker</span><span class="o">.</span><span class="n">seg</span><span class="p">(</span><span class="n">token_b</span><span class="p">))</span>
+
+        <span class="n">tu</span> <span class="o">=</span> <span class="n">maker</span><span class="o">.</span><span class="n">tu</span><span class="p">(</span><span class="n">src_tuv</span><span class="p">,</span> <span class="n">tgt_tuv</span><span class="p">)</span>
+        <span class="n">tu_text</span> <span class="o">=</span> <span class="n">etree</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="n">tu</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
+                                 <span class="n">pretty_print</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">tu_text</span> <span class="o">=</span> <span class="n">tu_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="s2">&quot;xml:lang&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sentence_a</span> <span class="ow">and</span> <span class="n">sentence_b</span><span class="p">:</span>
+            <span class="n">tu_text</span> <span class="o">=</span> <span class="n">tu_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">token_a</span><span class="p">,</span> <span class="n">sentence_a</span><span class="o">.</span><span class="n">to_text</span><span class="p">())</span>
+            <span class="n">tu_text</span> <span class="o">=</span> <span class="n">tu_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">token_b</span><span class="p">,</span> <span class="n">sentence_b</span><span class="o">.</span><span class="n">to_text</span><span class="p">())</span>
+        <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">tu_text</span><span class="p">)</span>
+    <span class="n">stream</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;&lt;/body&gt;</span><span class="se">\n</span><span class="s2">&lt;/tmx&gt;&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CacheOfSizeOne"><a class="viewcode-back" href="../../utils.html#yalign.utils.CacheOfSizeOne">[docs]</a><span class="k">class</span> <span class="nc">CacheOfSizeOne</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Function wrapper that provides caching. &quot;&quot;&quot;</span>
+    <span class="n">f</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">f</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">args</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="ow">or</span> <span class="n">kwargs</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Memoized"><a class="viewcode-back" href="../../utils.html#yalign.utils.Memoized">[docs]</a><span class="k">class</span> <span class="nc">Memoized</span><span class="p">(</span><span class="n">defaultdict</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__missing__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_factory</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013, Gonzalo García Berrotarán, Rafael Carrascosa, Andrew Vine.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
+    </div>
+  </body>
+</html>

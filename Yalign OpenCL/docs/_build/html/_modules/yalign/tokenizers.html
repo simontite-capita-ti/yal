@@ -1,0 +1,294 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>yalign.tokenizers &mdash; Yalign 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Yalign 0.1.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for yalign.tokenizers</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module providing tokenizers for various languages.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="kn">import</span> <span class="n">RegexpTokenizer</span><span class="p">,</span> <span class="n">WordPunctTokenizer</span>  <span class="c1"># FIXME: It&#39;s an overkill</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="c1">###</span>
+<span class="c1">### Common section</span>
+<span class="c1">###</span>
+<span class="n">default_tokenizer</span> <span class="o">=</span> <span class="n">WordPunctTokenizer</span><span class="p">()</span>
+
+<span class="n">basic_macros</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;AN1&quot;</span><span class="p">:</span> <span class="s2">&quot;[a-z0-9]&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;AN2&quot;</span><span class="p">:</span> <span class="s2">&quot;[a-z0-9</span><span class="se">\\</span><span class="s2">._]&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;AN3&quot;</span><span class="p">:</span> <span class="s2">r&quot;[a-z0-9-_\.~!*&#39;();:@&amp;=+$,/?%#\[\]]&quot;</span>
+<span class="p">}</span>
+<span class="n">macros</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;USERNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;{AN1}{AN2}*&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HOSTNAME&quot;</span><span class="p">:</span> <span class="s2">&quot;{AN1}{AN2}*&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HOSTNAME2&quot;</span><span class="p">:</span> <span class="s2">r&quot;{AN1}{AN2}*\.{AN2}*&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HOSTNAME3&quot;</span><span class="p">:</span> <span class="s2">r&quot;{AN1}{AN2}*(:[0-9]{{1,5}})?&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HOSTNAME4&quot;</span><span class="p">:</span> <span class="s2">r&quot;www\.{AN1}{AN2}*\.{AN2}*(:[0-9]{{1,5}})?&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SCHEME&quot;</span><span class="p">:</span> <span class="s2">&quot;mailto:|((http|https|ftp|ftps|ssh|git|news)://)&quot;</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">macros</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="s2">&quot;(&quot;</span> <span class="o">+</span> <span class="n">v</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">basic_macros</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+                                                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">macros</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+<span class="n">macros</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">basic_macros</span><span class="p">)</span>
+
+<span class="n">eyes</span> <span class="o">=</span> <span class="s2">&quot;:;8xX&gt;=&quot;</span>
+<span class="n">noses</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="s2">&quot;-o&quot;</span><span class="p">)</span>
+<span class="n">mouths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="s2">&quot;DP/&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;}}&quot;</span><span class="p">,</span> <span class="s2">&quot;{{&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">[&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">]&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">(&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">)&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">|&quot;</span><span class="p">]</span>
+<span class="n">smileys</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="n">y</span> <span class="o">+</span> <span class="n">z</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">eyes</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">noses</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">mouths</span><span class="p">]</span>
+
+<span class="n">HEADER</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;([01]?[0-9]|2[0-4]):[0-5]?[0-9](:[0-5]?[0-9])?&quot;</span><span class="p">,</span>  <span class="c1"># Time of day</span>
+    <span class="s2">&quot;&#39;&#39;|``&quot;</span><span class="p">,</span>                                           <span class="c1"># Quotation</span>
+    <span class="s2">&quot;{USERNAME}@{HOSTNAME2}&quot;</span><span class="p">,</span>                          <span class="c1"># Typical email</span>
+    <span class="s2">&quot;{SCHEME}({USERNAME}@)?{HOSTNAME3}(/{AN3}*)?&quot;</span><span class="p">,</span>     <span class="c1"># URI</span>
+    <span class="s2">&quot;{HOSTNAME4}&quot;</span><span class="p">,</span>                                     <span class="c1"># Typical URL</span>
+<span class="p">]</span>
+
+<span class="n">FOOTER</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;\w+&amp;\w+&quot;</span><span class="p">,</span>                                         <span class="c1"># And words</span>
+    <span class="s2">&quot;\w+&quot;</span><span class="p">,</span>                                             <span class="c1"># Normal words</span>
+    <span class="s2">&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">smileys</span><span class="p">),</span>                                 <span class="c1"># Smileys</span>
+    <span class="s2">&quot;[()/\[\]</span><span class="se">\\</span><span class="s2">.,;:\-</span><span class="se">\&quot;</span><span class="s2">&#39;`~?]|</span><span class="se">\\</span><span class="s2">.</span><span class="se">\\</span><span class="s2">.</span><span class="se">\\</span><span class="s2">.&quot;</span><span class="p">,</span>               <span class="c1"># Punctuation marks</span>
+    <span class="s2">&quot;\S+&quot;</span><span class="p">,</span>                                             <span class="c1"># Anything else</span>
+<span class="p">]</span>
+<span class="n">languages</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<div class="viewcode-block" id="get_tokenizer"><a class="viewcode-back" href="../../tokenizers.html#yalign.tokenizers.get_tokenizer">[docs]</a><span class="k">def</span> <span class="nf">get_tokenizer</span><span class="p">(</span><span class="n">language</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a tokenizer for a two character language code.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tokenizer</span> <span class="o">=</span> <span class="n">default_tokenizer</span>
+    <span class="k">if</span> <span class="n">language</span> <span class="ow">in</span> <span class="n">languages</span><span class="p">:</span>
+        <span class="n">regex</span> <span class="o">=</span> <span class="n">languages</span><span class="p">[</span><span class="n">language</span><span class="p">]</span>
+        <span class="n">regex</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">macros</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">regex</span><span class="p">]</span>
+        <span class="n">regex</span> <span class="o">=</span> <span class="s2">u&quot;|&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
+        <span class="n">tokenizer</span> <span class="o">=</span> <span class="n">RegexpTokenizer</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">re</span><span class="o">.</span><span class="n">UNICODE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">MULTILINE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tokenizer</span></div>
+
+
+<span class="c1">###</span>
+<span class="c1">### English</span>
+<span class="c1">###</span>
+
+<span class="n">english_contractions</span> <span class="o">=</span> <span class="p">[</span>
+ <span class="s2">&quot;ain&#39;t&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;aren&#39;t&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;can&#39;t&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;can&#39;t&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;&#39;cause&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;could&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;couldn&#39;t&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;couldn&#39;t&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;didn&#39;t&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;doesn&#39;t&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;don&#39;t&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;hadn&#39;t&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;hadn&#39;t&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;hasn&#39;t&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;haven&#39;t&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;he&#39;d&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;he&#39;d&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;he&#39;ll&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;he&#39;ll&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;he&#39;s&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;how&#39;d&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;how&#39;d&#39;y&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;how&#39;ll&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;how&#39;s&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;I&#39;d&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;I&#39;d&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;I&#39;ll&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;I&#39;ll&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;I&#39;m&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;I&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;isn&#39;t&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;it&#39;d&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;it&#39;d&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;it&#39;ll&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;it&#39;ll&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;it&#39;s&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;let&#39;s&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;ma&#39;am&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;might&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;mightn&#39;t&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;mightn&#39;t&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;must&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;mustn&#39;t&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;mustn&#39;t&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;needn&#39;t&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;o&#39;clock&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;oughtn&#39;t&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;oughtn&#39;t&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;shan&#39;t&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;shan&#39;t&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;she&#39;d&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;she&#39;d&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;she&#39;ll&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;she&#39;ll&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;she&#39;s&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;should&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;shouldn&#39;t&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;shouldn&#39;t&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;so&#39;s&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;that&#39;s&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;there&#39;d&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;there&#39;s&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;they&#39;d&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;they&#39;ll&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;they&#39;ll&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;they&#39;re&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;they&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;to&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;wasn&#39;t&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;we&#39;d&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;we&#39;ll&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;we&#39;ll&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;we&#39;re&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;we&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;weren&#39;t&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;what&#39;ll&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;what&#39;ll&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;what&#39;re&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;what&#39;s&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;what&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;when&#39;s&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;when&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;where&#39;d&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;where&#39;s&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;where&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;who&#39;ll&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;who&#39;ll&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;who&#39;s&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;who&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;why&#39;s&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;will&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;won&#39;t&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;won&#39;t&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;would&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;wouldn&#39;t&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;wouldn&#39;t&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;y&#39;all&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;y&#39;all&#39;d&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;y&#39;all&#39;re&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;y&#39;all&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;you&#39;d&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;you&#39;d&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;you&#39;ll&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;you&#39;ll&#39;ve&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;you&#39;re&quot;</span><span class="p">,</span>
+ <span class="s2">&quot;you&#39;ve&quot;</span><span class="p">]</span>
+
+<span class="c1"># languages[&quot;en&quot;] = HEADER + [</span>
+<span class="c1">#     &quot;[01]?[0-9][-/.][0123]?[0-9][-/.][0-9]{{2,4}}&quot;,    # Date mm/dd/yyyy</span>
+<span class="c1">#     &quot;|&quot;.join(english_contractions),                    # Common contractions</span>
+<span class="c1">#     &quot;&#39;s&quot;,                                              # Possesive</span>
+<span class="c1">#     &quot;\w+([_-]\w+)+&quot;,                                   # Normal words+compounds</span>
+<span class="c1"># ] + FOOTER</span>
+
+
+<span class="c1">###</span>
+<span class="c1">### Spanish</span>
+<span class="c1">###</span>
+
+<span class="c1"># languages[&quot;es&quot;] = HEADER + [</span>
+<span class="c1">#     &quot;[0123]?[0-9][-/.][01]?[0-9][-/.][0-9]{{2,4}}&quot;,    # Date dd/mm/yyyy</span>
+<span class="c1">#     u&quot;¡¿&quot;,                                             # Extra punctuation mark</span>
+<span class="c1"># ] + FOOTER</span>
+
+
+<span class="c1">###</span>
+<span class="c1">### Portuguese</span>
+<span class="c1">###</span>
+
+<span class="c1"># languages[&quot;pt&quot;] = HEADER + [</span>
+<span class="c1">#     &quot;[0123]?[0-9][-/.][01]?[0-9][-/.][0-9]{{2,4}}&quot;,    # Date dd/mm/yyyy</span>
+<span class="c1">#     u&quot;¡¿&quot;,                                             # Extra punctuation mark</span>
+<span class="c1">#     &quot;\w+(-\w+)+&quot;,                                      # Compound words</span>
+<span class="c1"># ] + FOOTER</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013, Gonzalo García Berrotarán, Rafael Carrascosa, Andrew Vine.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
+    </div>
+  </body>
+</html>

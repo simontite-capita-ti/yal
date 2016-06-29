@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Input Conversion &mdash; Yalign 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Yalign 0.1.1 documentation" href="index.html" />
+    <link rel="up" title="Library Reference" href="reference.html" />
+    <link rel="next" title="Sentence Pair Score" href="sentencepairscore.html" />
+    <link rel="prev" title="Evaluation" href="evaluation.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="sentencepairscore.html" title="Sentence Pair Score"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="evaluation.html" title="Evaluation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" accesskey="U">Library Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-yalign.input_conversion">
+<span id="input-conversion"></span><h1>Input Conversion<a class="headerlink" href="#module-yalign.input_conversion" title="Permalink to this headline">¶</a></h1>
+<p>A module of helper functions for dealing with various inputs.</p>
+<dl class="function">
+<dt id="yalign.input_conversion.generate_documents">
+<code class="descclassname">yalign.input_conversion.</code><code class="descname">generate_documents</code><span class="sig-paren">(</span><em>filepath</em>, <em>m=20</em>, <em>n=20</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/input_conversion.html#generate_documents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.input_conversion.generate_documents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Document generator. Documents are created from the parallel corpus and
+will be between m and n lines long.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="yalign.input_conversion.html_to_document">
+<code class="descclassname">yalign.input_conversion.</code><code class="descname">html_to_document</code><span class="sig-paren">(</span><em>html</em>, <em>language='en'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/input_conversion.html#html_to_document"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.input_conversion.html_to_document" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns html text as list of Sentences</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="yalign.input_conversion.parallel_corpus_to_documents">
+<code class="descclassname">yalign.input_conversion.</code><code class="descname">parallel_corpus_to_documents</code><span class="sig-paren">(</span><em>filepath</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/input_conversion.html#parallel_corpus_to_documents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.input_conversion.parallel_corpus_to_documents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms a parallel corpus file format into two
+documents.
+The Parallel corpus has:</p>
+<blockquote>
+<div><ul class="simple">
+<li>One sentences per line.</li>
+<li>One line of each language.</li>
+<li>Sentences are tokenized and tokens are space separated.</li>
+<li>The file encoding is UTF-8</li>
+</ul>
+</div></blockquote>
+<p>For example:</p>
+<blockquote>
+<div>This is a sentence .
+Esto es una oración .
+And this , my friend , is another .
+Y esta , mi amigo , es otra .</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="yalign.input_conversion.parse_training_file">
+<code class="descclassname">yalign.input_conversion.</code><code class="descname">parse_training_file</code><span class="sig-paren">(</span><em>training_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/input_conversion.html#parse_training_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.input_conversion.parse_training_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads SentencePairs from a training file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="yalign.input_conversion.srt_to_document">
+<code class="descclassname">yalign.input_conversion.</code><code class="descname">srt_to_document</code><span class="sig-paren">(</span><em>text</em>, <em>lang='en'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/input_conversion.html#srt_to_document"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.input_conversion.srt_to_document" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a string of srt into a list of Sentences.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="yalign.input_conversion.text_to_document">
+<code class="descclassname">yalign.input_conversion.</code><code class="descname">text_to_document</code><span class="sig-paren">(</span><em>text</em>, <em>language='en'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/input_conversion.html#text_to_document"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.input_conversion.text_to_document" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns string text as list of Sentences</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="yalign.input_conversion.tmx_file_to_documents">
+<code class="descclassname">yalign.input_conversion.</code><code class="descname">tmx_file_to_documents</code><span class="sig-paren">(</span><em>filepath</em>, <em>lang_a=None</em>, <em>lang_b=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/input_conversion.html#tmx_file_to_documents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.input_conversion.tmx_file_to_documents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a tmx file into two lists of Sentences.
+The first for language lang_a and the second for language lang_b.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="yalign.input_conversion.tokenize">
+<code class="descclassname">yalign.input_conversion.</code><code class="descname">tokenize</code><span class="sig-paren">(</span><em>text</em>, <em>language='en'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/input_conversion.html#tokenize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.input_conversion.tokenize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a Sentence with Words (ie, a list of unicode objects)</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="evaluation.html"
+                        title="previous chapter">Evaluation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="sentencepairscore.html"
+                        title="next chapter">Sentence Pair Score</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/input_conversion.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="sentencepairscore.html" title="Sentence Pair Score"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="evaluation.html" title="Evaluation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" >Library Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013, Gonzalo García Berrotarán, Rafael Carrascosa, Andrew Vine.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
+    </div>
+  </body>
+</html>

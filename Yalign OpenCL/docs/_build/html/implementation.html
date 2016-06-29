@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Implementation &mdash; Yalign 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Yalign 0.1.1 documentation" href="index.html" />
+    <link rel="next" title="Library Reference" href="reference.html" />
+    <link rel="prev" title="Tutorial" href="tutorial.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="reference.html" title="Library Reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tutorial.html" title="Tutorial"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Yalign 0.1.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="implementation">
+<h1>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h1>
+<p>Yalign is implemented using:</p>
+<blockquote>
+<div><ul class="simple">
+<li>A sentence similarity metric. Given two sentences it produces a rough
+estimate (a number between 0 and 1) of how likely are those two sentences
+to be a translation of each other.</li>
+<li>A sequence aligner, such that given two documents (a list of sentences) it
+produces an alignment which maximizes the sum of the individual
+(per sentence pair) similarities.</li>
+</ul>
+</div></blockquote>
+<p>So Yalign&#8217;s main algorithm is actually a pretty wrapper to a standard sequence
+alignment algorithm.</p>
+<p>For the sequence alignment Yalign uses a variation of the
+<a class="reference external" href="http://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm">Needleman-Wunch algorithm</a>
+to find an optimal alignment between the sentences in two given documents.
+On the good side, the algorithm has polynomial time worst case complexity and it
+produces an optimal alignment.
+On the bad side it can&#8217;t handle alignments that
+cross each other or alignments from two sentences into a single one (even tough
+is possible to modify the current implementation to handle those cases).</p>
+<p>Since the sentence similarity is a computationally expensive operation,
+the mentioned &#8220;variation&#8221; on the Needleman-Wunch algorithm consists in using
+the <a class="reference external" href="http://en.wikipedia.org/wiki/A*_search_algorithm">A*</a> to explore the
+search space instead of using the classical dynamic programming aproach (which
+would always requiere <cite>N * M</cite> calls to the sentence similarity metric).</p>
+<p>After the alignment, only sentences that have a high probability of being
+translations are included in the final alignment. Ie, the result is filtered
+in order to deliver high quality alignments. To do this, a threshold value is
+used such that if the sentence similarity metric is bad enough that pair is
+excluded.</p>
+<p>For the sentence similarity metric the algorithm uses a statistical
+classifier&#8217;s likelihood output and adapts it into the 0-1 range.</p>
+<p>The classifier is trained to determine if a pair of sentences are translations
+of each other or not (a binary value). The particular classifier used for this
+project is a
+<a class="reference external" href="http://en.wikipedia.org/wiki/Support_vector_machine">Support Vector Machine</a>.
+Besides being excelent classifiers, SVMs can provide a distance to the
+separation hyperplane during classification, and this distance can be easily
+modified using a
+<a class="reference external" href="http://en.wikipedia.org/wiki/Sigmoid_function">Sigmoid Function</a> to return
+a likelihood between 0 and 1.</p>
+<p>The use of a classifier means that the quality of the alignment is dependent
+not only on the input but also on the quality of the trained classifier.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tutorial.html"
+                        title="previous chapter">Tutorial</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="reference.html"
+                        title="next chapter">Library Reference</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/implementation.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="reference.html" title="Library Reference"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tutorial.html" title="Tutorial"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Yalign 0.1.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013, Gonzalo García Berrotarán, Rafael Carrascosa, Andrew Vine.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
+    </div>
+  </body>
+</html>

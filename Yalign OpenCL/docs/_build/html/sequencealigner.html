@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Sequence Aligner &mdash; Yalign 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Yalign 0.1.1 documentation" href="index.html" />
+    <link rel="up" title="Library Reference" href="reference.html" />
+    <link rel="next" title="SVM" href="svm.html" />
+    <link rel="prev" title="Sentence Pair Score" href="sentencepairscore.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="svm.html" title="SVM"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="sentencepairscore.html" title="Sentence Pair Score"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" accesskey="U">Library Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-yalign.sequencealigner">
+<span id="sequence-aligner"></span><h1>Sequence Aligner<a class="headerlink" href="#module-yalign.sequencealigner" title="Permalink to this headline">¶</a></h1>
+<p>Module for handling sequence alignment.</p>
+<dl class="class">
+<dt id="yalign.sequencealigner.SequenceAligner">
+<em class="property">class </em><code class="descclassname">yalign.sequencealigner.</code><code class="descname">SequenceAligner</code><span class="sig-paren">(</span><em>score</em>, <em>gap_penalty</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/sequencealigner.html#SequenceAligner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.sequencealigner.SequenceAligner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Aligns two sequences.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="yalign.sequencealigner.SequenceAlignmentSearchProblem">
+<em class="property">class </em><code class="descclassname">yalign.sequencealigner.</code><code class="descname">SequenceAlignmentSearchProblem</code><span class="sig-paren">(</span><em>xs</em>, <em>ys</em>, <em>score</em>, <em>gap_penalty</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/sequencealigner.html#SequenceAlignmentSearchProblem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.sequencealigner.SequenceAlignmentSearchProblem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">simpleai.search.models.SearchProblem</span></code></p>
+<p>Represents and manipulates the search space for a sequence
+alignment problem. Used by simpleai&#8217;s graph search algorithm.</p>
+<dl class="method">
+<dt id="yalign.sequencealigner.SequenceAlignmentSearchProblem.actions">
+<code class="descname">actions</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/sequencealigner.html#SequenceAlignmentSearchProblem.actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.sequencealigner.SequenceAlignmentSearchProblem.actions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the next actions from a given state.
+A state is an alignment (tuple of indexes from either sequence).
+An action is a the next alignment to consider with a score for
+that alignment.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="yalign.sequencealigner.SequenceAlignmentSearchProblem.cost">
+<code class="descname">cost</code><span class="sig-paren">(</span><em>state1</em>, <em>action</em>, <em>state2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/sequencealigner.html#SequenceAlignmentSearchProblem.cost"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.sequencealigner.SequenceAlignmentSearchProblem.cost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cost of this action.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="yalign.sequencealigner.SequenceAlignmentSearchProblem.heuristic">
+<code class="descname">heuristic</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/sequencealigner.html#SequenceAlignmentSearchProblem.heuristic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.sequencealigner.SequenceAlignmentSearchProblem.heuristic" title="Permalink to this definition">¶</a></dt>
+<dd><p>A heuristic for A* type searches. Currently we return
+The distance of this state from the diagonal in a N*M
+lattice where N and M are the lengths of the two sequences.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="yalign.sequencealigner.SequenceAlignmentSearchProblem.is_goal">
+<code class="descname">is_goal</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/sequencealigner.html#SequenceAlignmentSearchProblem.is_goal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.sequencealigner.SequenceAlignmentSearchProblem.is_goal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Are we finished aligning? True when our when state is the
+alignment (N, M) where N and M are the lengths of the
+two sequences.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="yalign.sequencealigner.SequenceAlignmentSearchProblem.result">
+<code class="descname">result</code><span class="sig-paren">(</span><em>state</em>, <em>action</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/sequencealigner.html#SequenceAlignmentSearchProblem.result"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.sequencealigner.SequenceAlignmentSearchProblem.result" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the next state for this state, action pair.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="sentencepairscore.html"
+                        title="previous chapter">Sentence Pair Score</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="svm.html"
+                        title="next chapter">SVM</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/sequencealigner.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="svm.html" title="SVM"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="sentencepairscore.html" title="Sentence Pair Score"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" >Library Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013, Gonzalo García Berrotarán, Rafael Carrascosa, Andrew Vine.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>yalign.evaluation &mdash; Yalign 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Yalign 0.1.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for yalign.evaluation</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for the evaluation of sequence alignment accuracy.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">simpleai.machine_learning</span> <span class="kn">import</span> <span class="n">kfold</span>
+
+<span class="kn">from</span> <span class="nn">yalign.svm</span> <span class="kn">import</span> <span class="n">SVMClassifier</span>
+<span class="kn">from</span> <span class="nn">yalign.input_conversion</span> <span class="kn">import</span> <span class="n">generate_documents</span>
+<span class="kn">from</span> <span class="nn">yalign.train_data_generation</span> <span class="kn">import</span> <span class="n">training_scrambling_from_documents</span>
+<span class="kn">from</span> <span class="nn">yalign.train_data_generation</span> <span class="kn">import</span> <span class="n">training_alignments_from_documents</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+
+
+<div class="viewcode-block" id="evaluate"><a class="viewcode-back" href="../../evaluation.html#yalign.evaluation.evaluate">[docs]</a><span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">parallel_corpus</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns statistics for N document alignment trials.</span>
+<span class="sd">    The documents are generated from the parallel corpus.</span>
+
+<span class="sd">    - `parallel_corpus`: A file object</span>
+<span class="sd">    - `model`: A YalignModel</span>
+<span class="sd">    - `N`: Number of trials</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">docs</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">generate_documents</span><span class="p">(</span><span class="n">parallel_corpus</span><span class="p">)):</span>
+        <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">alignments</span> <span class="o">=</span> <span class="n">training_scrambling_from_documents</span><span class="p">(</span><span class="o">*</span><span class="n">docs</span><span class="p">)</span>
+        <span class="n">predicted_alignments</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">align_indexes</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
+        <span class="n">scores</span> <span class="o">=</span> <span class="n">F_score</span><span class="p">(</span><span class="n">predicted_alignments</span><span class="p">,</span> <span class="n">alignments</span><span class="p">)</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">scores</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">&gt;=</span> <span class="n">N</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">break</span>
+    <span class="k">return</span> <span class="n">_stats</span><span class="p">(</span><span class="n">results</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_stats</span><span class="p">(</span><span class="n">xs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">max</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                <span class="n">mean</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                <span class="n">std</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="F_score"><a class="viewcode-back" href="../../evaluation.html#yalign.evaluation.F_score">[docs]</a><span class="k">def</span> <span class="nf">F_score</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the F score described here: http://en.wikipedia.org/wiki/F1_score</span>
+<span class="sd">    for list `xs` against to the list `ys`.</span>
+
+<span class="sd">    Make beta smaller to give more weight to the precision.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">precision</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">recall</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="n">b_2</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">b_2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">p</span> <span class="o">*</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">b_2</span> <span class="o">*</span> <span class="n">p</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">F</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">r</span></div>
+
+
+<div class="viewcode-block" id="precision"><a class="viewcode-back" href="../../evaluation.html#yalign.evaluation.precision">[docs]</a><span class="k">def</span> <span class="nf">precision</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Precision of list `xs` to list `ys`.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ys</span><span class="p">])</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">))</span> <span class="k">if</span> <span class="n">xs</span> <span class="k">else</span> <span class="mf">0.</span></div>
+
+
+<div class="viewcode-block" id="recall"><a class="viewcode-back" href="../../evaluation.html#yalign.evaluation.recall">[docs]</a><span class="k">def</span> <span class="nf">recall</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Recall of list `xs` to list `ys`.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span> <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ys</span><span class="p">])</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ys</span><span class="p">))</span> <span class="k">if</span> <span class="n">ys</span> <span class="k">else</span> <span class="mf">0.</span></div>
+
+
+<div class="viewcode-block" id="alignment_percentage"><a class="viewcode-back" href="../../evaluation.html#yalign.evaluation.alignment_percentage">[docs]</a><span class="k">def</span> <span class="nf">alignment_percentage</span><span class="p">(</span><span class="n">document_a</span><span class="p">,</span> <span class="n">document_b</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the percentage of alignments of `document_a` and `document_b`</span>
+<span class="sd">    using the model provided.</span>
+
+<span class="sd">    - `document_a` and `document_b` are two lists of Sentences to align.</span>
+<span class="sd">    - `model` can be a YalignModel or a path to a yalign model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">document_a</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">document_b</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">100.0</span>
+
+    <span class="n">align</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">align</span><span class="p">(</span><span class="n">document_a</span><span class="p">,</span> <span class="n">document_b</span><span class="p">)</span>
+    <span class="n">align</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">align</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">]</span>
+    <span class="n">ratio</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">align</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">document_a</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">document_b</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">ratio</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="classifier_precision"><a class="viewcode-back" href="../../evaluation.html#yalign.evaluation.classifier_precision">[docs]</a><span class="k">def</span> <span class="nf">classifier_precision</span><span class="p">(</span><span class="n">document_a</span><span class="p">,</span> <span class="n">document_b</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Runs a ten-fold validation on the classifier and returns</span>
+<span class="sd">    a value between 0 and 100. Higher is better.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">document_a</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">document_b</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+
+    <span class="n">training</span> <span class="o">=</span> <span class="n">training_alignments_from_documents</span><span class="p">(</span><span class="n">document_a</span><span class="p">,</span> <span class="n">document_b</span><span class="p">)</span>
+    <span class="n">problem</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">sentence_pair_score</span><span class="o">.</span><span class="n">problem</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="n">kfold</span><span class="p">(</span><span class="n">training</span><span class="p">,</span> <span class="n">problem</span><span class="p">,</span> <span class="n">SVMClassifier</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="n">score</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="correlation"><a class="viewcode-back" href="../../evaluation.html#yalign.evaluation.correlation">[docs]</a><span class="k">def</span> <span class="nf">correlation</span><span class="p">(</span><span class="n">classifier</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the correlation of the attributes of a classifier.</span>
+
+<span class="sd">    For more information see:</span>
+<span class="sd">        - http://en.wikipedia.org/wiki/Correlation_and_dependence</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">dataset</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">classifier</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">)</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">classifier</span><span class="o">.</span><span class="n">dataset</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">answers</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">attributes</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
+        <span class="n">answers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">classifier</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">target</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">classifier</span><span class="o">.</span><span class="n">attributes</span><span class="p">):</span>
+            <span class="n">attributes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">attr</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+
+    <span class="n">answers_std</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">answers</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">attributes</span><span class="p">)):</span>
+        <span class="n">cov</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">answers</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">std</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">attributes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">*</span> <span class="n">answers_std</span>
+        <span class="k">if</span> <span class="n">std</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">corr</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">corr</span> <span class="o">=</span> <span class="n">cov</span> <span class="o">/</span> <span class="n">std</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">classifier</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">corr</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013, Gonzalo García Berrotarán, Rafael Carrascosa, Andrew Vine.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
+    </div>
+  </body>
+</html>

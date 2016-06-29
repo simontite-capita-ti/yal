@@ -1,0 +1,155 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Utils &mdash; Yalign 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Yalign 0.1.1 documentation" href="index.html" />
+    <link rel="up" title="Library Reference" href="reference.html" />
+    <link rel="next" title="Word Pair Score" href="wordpairscore.html" />
+    <link rel="prev" title="Train Data Generation" href="train_data_generation.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="wordpairscore.html" title="Word Pair Score"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="train_data_generation.html" title="Train Data Generation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" accesskey="U">Library Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-yalign.utils">
+<span id="utils"></span><h1>Utils<a class="headerlink" href="#module-yalign.utils" title="Permalink to this headline">¶</a></h1>
+<p>Module for miscellaneous functions.</p>
+<dl class="class">
+<dt id="yalign.utils.CacheOfSizeOne">
+<em class="property">class </em><code class="descclassname">yalign.utils.</code><code class="descname">CacheOfSizeOne</code><span class="sig-paren">(</span><em>f</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/utils.html#CacheOfSizeOne"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.utils.CacheOfSizeOne" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Function wrapper that provides caching.</p>
+<dl class="attribute">
+<dt id="yalign.utils.CacheOfSizeOne.f">
+<code class="descname">f</code><em class="property"> = None</em><a class="headerlink" href="#yalign.utils.CacheOfSizeOne.f" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="yalign.utils.Memoized">
+<em class="property">class </em><code class="descclassname">yalign.utils.</code><code class="descname">Memoized</code><a class="reference internal" href="_modules/yalign/utils.html#Memoized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.utils.Memoized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">collections.defaultdict</span></code></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="yalign.utils.host_and_page">
+<code class="descclassname">yalign.utils.</code><code class="descname">host_and_page</code><span class="sig-paren">(</span><em>url</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/utils.html#host_and_page"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.utils.host_and_page" title="Permalink to this definition">¶</a></dt>
+<dd><p>Splits a <cite>url</cite> into the hostname and the rest of the url.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="yalign.utils.read_from_url">
+<code class="descclassname">yalign.utils.</code><code class="descname">read_from_url</code><span class="sig-paren">(</span><em>url</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/utils.html#read_from_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.utils.read_from_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>GET this <cite>url</cite> and read the response.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="yalign.utils.write_tmx">
+<code class="descclassname">yalign.utils.</code><code class="descname">write_tmx</code><span class="sig-paren">(</span><em>stream</em>, <em>sentence_pairs</em>, <em>language_a</em>, <em>language_b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/utils.html#write_tmx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.utils.write_tmx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the SentencePair&#8217;s out in tmx format,</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="train_data_generation.html"
+                        title="previous chapter">Train Data Generation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="wordpairscore.html"
+                        title="next chapter">Word Pair Score</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/utils.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="wordpairscore.html" title="Word Pair Score"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="train_data_generation.html" title="Train Data Generation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" >Library Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013, Gonzalo García Berrotarán, Rafael Carrascosa, Andrew Vine.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
+    </div>
+  </body>
+</html>

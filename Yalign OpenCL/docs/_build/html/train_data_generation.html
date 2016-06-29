@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Train Data Generation &mdash; Yalign 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Yalign 0.1.1 documentation" href="index.html" />
+    <link rel="up" title="Library Reference" href="reference.html" />
+    <link rel="next" title="Utils" href="utils.html" />
+    <link rel="prev" title="Tokenizers" href="tokenizers.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="utils.html" title="Utils"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tokenizers.html" title="Tokenizers"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" accesskey="U">Library Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-yalign.train_data_generation">
+<span id="train-data-generation"></span><h1>Train Data Generation<a class="headerlink" href="#module-yalign.train_data_generation" title="Permalink to this headline">¶</a></h1>
+<p>Module to generate training data.</p>
+<dl class="function">
+<dt id="yalign.train_data_generation.training_alignments_from_documents">
+<code class="descclassname">yalign.train_data_generation.</code><code class="descname">training_alignments_from_documents</code><span class="sig-paren">(</span><em>document_a</em>, <em>document_b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/train_data_generation.html#training_alignments_from_documents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.train_data_generation.training_alignments_from_documents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an iterable of SentencePairs to be used for training.
+The inputs <cite>document_a</cite> and <cite>document_b</cite> are both lists of
+Sentences made from a parallel corpus.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="yalign.train_data_generation.training_scrambling_from_documents">
+<code class="descclassname">yalign.train_data_generation.</code><code class="descname">training_scrambling_from_documents</code><span class="sig-paren">(</span><em>document_a</em>, <em>document_b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/train_data_generation.html#training_scrambling_from_documents"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.train_data_generation.training_scrambling_from_documents" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Returns a tuple <cite>(scrambled_a, scrambled_b, correct_alignments)</cite> where:</dt>
+<dd><ul class="first last">
+<li><p class="first"><cite>scrambled_a</cite> is a scrambled version of document_a.</p>
+</li>
+<li><p class="first"><cite>scrambled_b</cite> is a scrambled version of document_b.</p>
+</li>
+<li><dl class="first docutils">
+<dt><cite>correct_alignments</cite> are all the correct sentence alignments that exist</dt>
+<dd><p class="first last">between <cite>scrambled_a</cite> and <cite>scrambled_b</cite>.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tokenizers.html"
+                        title="previous chapter">Tokenizers</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="utils.html"
+                        title="next chapter">Utils</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/train_data_generation.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="utils.html" title="Utils"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tokenizers.html" title="Tokenizers"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" >Library Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013, Gonzalo García Berrotarán, Rafael Carrascosa, Andrew Vine.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>yalign.svm &mdash; Yalign 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Yalign 0.1.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for yalign.svm</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for code dealing with the classifier.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">svm</span>
+<span class="kn">from</span> <span class="nn">simpleai.machine_learning</span> <span class="kn">import</span> <span class="n">Classifier</span>
+
+
+<div class="viewcode-block" id="SVMClassifier"><a class="viewcode-back" href="../../svm.html#yalign.svm.SVMClassifier">[docs]</a><span class="k">class</span> <span class="nc">SVMClassifier</span><span class="p">(</span><span class="n">Classifier</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A Support Vector Machine classifier to classify if a sentence is a</span>
+<span class="sd">    translation of another sentence.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SVMClassifier.learn"><a class="viewcode-back" href="../../svm.html#yalign.svm.SVMClassifier.learn">[docs]</a>    <span class="k">def</span> <span class="nf">learn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Train the classifier.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">vectors</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">answers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">:</span>
+            <span class="n">vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vectorize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">vectors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span>
+            <span class="n">answer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">target</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">answers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">vectors</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot train on empty set&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">svm</span> <span class="o">=</span> <span class="n">svm</span><span class="o">.</span><span class="n">SVC</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_SVC_hack</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">svm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">vectors</span><span class="p">,</span> <span class="n">answers</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SVMClassifier.classify"><a class="viewcode-back" href="../../svm.html#yalign.svm.SVMClassifier.classify">[docs]</a>    <span class="k">def</span> <span class="nf">classify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sentence_pair</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Classify if this SentencePair `sentence_pair` has sentences</span>
+<span class="sd">        that are translations of each other.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_SVC_hack</span><span class="p">()</span>
+        <span class="n">vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vectorize</span><span class="p">(</span><span class="n">sentence_pair</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">svm</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">vector</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="SVMClassifier.score"><a class="viewcode-back" href="../../svm.html#yalign.svm.SVMClassifier.score">[docs]</a>    <span class="k">def</span> <span class="nf">score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The score is positive for an alignment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_SVC_hack</span><span class="p">()</span>
+        <span class="n">vector</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vectorize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">svm</span><span class="o">.</span><span class="n">decision_function</span><span class="p">(</span><span class="n">vector</span><span class="p">))</span></div>
+
+    <span class="k">def</span> <span class="nf">_vectorize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="n">vector</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">attributes</span><span class="p">]</span>
+        <span class="n">vector</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vector</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">vector</span>
+
+    <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s2">&quot;dataset&quot;</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">result</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">_SVC_hack</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This is a dirty hack to deal with SVC&#39;s that so that a pickled classifier</span>
+<span class="sd">        works across scikit-learn versions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">svm</span><span class="p">,</span> <span class="s1">&#39;_impl&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">svm</span><span class="o">.</span><span class="n">_impl</span> <span class="o">=</span> <span class="s1">&#39;c_svc&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">svm</span><span class="p">,</span> <span class="s1">&#39;impl&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">svm</span><span class="o">.</span><span class="n">impl</span> <span class="o">=</span> <span class="s1">&#39;c_svc&#39;</span></div>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013, Gonzalo García Berrotarán, Rafael Carrascosa, Andrew Vine.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
+    </div>
+  </body>
+</html>

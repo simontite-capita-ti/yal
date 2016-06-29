@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Evaluation &mdash; Yalign 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Yalign 0.1.1 documentation" href="index.html" />
+    <link rel="up" title="Library Reference" href="reference.html" />
+    <link rel="next" title="Input Conversion" href="input_conversion.html" />
+    <link rel="prev" title="Datatypes" href="datatypes.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="input_conversion.html" title="Input Conversion"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="datatypes.html" title="Datatypes"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" accesskey="U">Library Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="evaluation">
+<h1>Evaluation<a class="headerlink" href="#evaluation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-yalign.evaluation">
+<span id="evaluation-module"></span><h2><code class="xref py py-mod docutils literal"><span class="pre">evaluation</span></code> Module<a class="headerlink" href="#module-yalign.evaluation" title="Permalink to this headline">¶</a></h2>
+<p>Module for the evaluation of sequence alignment accuracy.</p>
+<dl class="function">
+<dt id="yalign.evaluation.F_score">
+<code class="descclassname">yalign.evaluation.</code><code class="descname">F_score</code><span class="sig-paren">(</span><em>xs</em>, <em>ys</em>, <em>beta=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/evaluation.html#F_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.evaluation.F_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the F score described here: <a class="reference external" href="http://en.wikipedia.org/wiki/F1_score">http://en.wikipedia.org/wiki/F1_score</a>
+for list <cite>xs</cite> against to the list <cite>ys</cite>.</p>
+<p>Make beta smaller to give more weight to the precision.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="yalign.evaluation.alignment_percentage">
+<code class="descclassname">yalign.evaluation.</code><code class="descname">alignment_percentage</code><span class="sig-paren">(</span><em>document_a</em>, <em>document_b</em>, <em>model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/evaluation.html#alignment_percentage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.evaluation.alignment_percentage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the percentage of alignments of <cite>document_a</cite> and <cite>document_b</cite>
+using the model provided.</p>
+<ul class="simple">
+<li><cite>document_a</cite> and <cite>document_b</cite> are two lists of Sentences to align.</li>
+<li><cite>model</cite> can be a YalignModel or a path to a yalign model.</li>
+</ul>
+</dd></dl>
+
+<dl class="function">
+<dt id="yalign.evaluation.classifier_precision">
+<code class="descclassname">yalign.evaluation.</code><code class="descname">classifier_precision</code><span class="sig-paren">(</span><em>document_a</em>, <em>document_b</em>, <em>model</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/evaluation.html#classifier_precision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.evaluation.classifier_precision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs a ten-fold validation on the classifier and returns
+a value between 0 and 100. Higher is better.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="yalign.evaluation.correlation">
+<code class="descclassname">yalign.evaluation.</code><code class="descname">correlation</code><span class="sig-paren">(</span><em>classifier</em>, <em>dataset=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/evaluation.html#correlation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.evaluation.correlation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the correlation of the attributes of a classifier.</p>
+<dl class="docutils">
+<dt>For more information see:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference external" href="http://en.wikipedia.org/wiki/Correlation_and_dependence">http://en.wikipedia.org/wiki/Correlation_and_dependence</a></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="yalign.evaluation.evaluate">
+<code class="descclassname">yalign.evaluation.</code><code class="descname">evaluate</code><span class="sig-paren">(</span><em>parallel_corpus</em>, <em>model</em>, <em>N=100</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/evaluation.html#evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.evaluation.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns statistics for N document alignment trials.
+The documents are generated from the parallel corpus.</p>
+<ul class="simple">
+<li><cite>parallel_corpus</cite>: A file object</li>
+<li><cite>model</cite>: A YalignModel</li>
+<li><cite>N</cite>: Number of trials</li>
+</ul>
+</dd></dl>
+
+<dl class="function">
+<dt id="yalign.evaluation.precision">
+<code class="descclassname">yalign.evaluation.</code><code class="descname">precision</code><span class="sig-paren">(</span><em>xs</em>, <em>ys</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/evaluation.html#precision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.evaluation.precision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precision of list <cite>xs</cite> to list <cite>ys</cite>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="yalign.evaluation.recall">
+<code class="descclassname">yalign.evaluation.</code><code class="descname">recall</code><span class="sig-paren">(</span><em>xs</em>, <em>ys</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/evaluation.html#recall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.evaluation.recall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recall of list <cite>xs</cite> to list <cite>ys</cite>.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Evaluation</a><ul>
+<li><a class="reference internal" href="#module-yalign.evaluation"><code class="docutils literal"><span class="pre">evaluation</span></code> Module</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="datatypes.html"
+                        title="previous chapter">Datatypes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="input_conversion.html"
+                        title="next chapter">Input Conversion</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/evaluation.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="input_conversion.html" title="Input Conversion"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="datatypes.html" title="Datatypes"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" >Library Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013, Gonzalo García Berrotarán, Rafael Carrascosa, Andrew Vine.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
+    </div>
+  </body>
+</html>

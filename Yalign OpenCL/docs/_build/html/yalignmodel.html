@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Yalign Model &mdash; Yalign 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Yalign 0.1.1 documentation" href="index.html" />
+    <link rel="up" title="Library Reference" href="reference.html" />
+    <link rel="prev" title="Word Pair Score" href="wordpairscore.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="wordpairscore.html" title="Word Pair Score"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" accesskey="U">Library Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-yalign.yalignmodel">
+<span id="yalign-model"></span><h1>Yalign Model<a class="headerlink" href="#module-yalign.yalignmodel" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="yalign.yalignmodel.MetadataHelper">
+<em class="property">class </em><code class="descclassname">yalign.yalignmodel.</code><code class="descname">MetadataHelper</code><span class="sig-paren">(</span><em>metadata</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/yalignmodel.html#MetadataHelper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.yalignmodel.MetadataHelper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">dict</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="yalign.yalignmodel.YalignModel">
+<em class="property">class </em><code class="descclassname">yalign.yalignmodel.</code><code class="descname">YalignModel</code><span class="sig-paren">(</span><em>document_pair_aligner=None</em>, <em>threshold=None</em>, <em>metadata=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/yalignmodel.html#YalignModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.yalignmodel.YalignModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Main Yalign class.
+It provides methods to train a alignment model, to load a model from a
+folder and to align two documents.</p>
+<dl class="method">
+<dt id="yalign.yalignmodel.YalignModel.align">
+<code class="descname">align</code><span class="sig-paren">(</span><em>document_a</em>, <em>document_b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/yalignmodel.html#YalignModel.align"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.yalignmodel.YalignModel.align" title="Permalink to this definition">¶</a></dt>
+<dd><p>Try to detect aligned sentences from the comparable documents
+<cite>document_a</cite> and <cite>document_b</cite>.
+The returned alignments are expected to meet the F-measure for which
+the model was trained for.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="yalign.yalignmodel.YalignModel.align_indexes">
+<code class="descname">align_indexes</code><span class="sig-paren">(</span><em>document_a</em>, <em>document_b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/yalignmodel.html#YalignModel.align_indexes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.yalignmodel.YalignModel.align_indexes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Same as <cite>align</cite> but returning indexes in documents instead of
+sentences.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="yalign.yalignmodel.YalignModel.load">
+<em class="property">classmethod </em><code class="descname">load</code><span class="sig-paren">(</span><em>model_directory</em>, <em>mode</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/yalignmodel.html#YalignModel.load"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.yalignmodel.YalignModel.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method to loads an existing YalignModel from the path to the
+folder where it&#8217;s contained.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="yalign.yalignmodel.YalignModel.optimize_gap_penalty_and_threshold">
+<code class="descname">optimize_gap_penalty_and_threshold</code><span class="sig-paren">(</span><em>document_a</em>, <em>document_b</em>, <em>real_alignments</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/yalignmodel.html#YalignModel.optimize_gap_penalty_and_threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.yalignmodel.YalignModel.optimize_gap_penalty_and_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given documents <cite>document_a</cite> and <cite>document_b</cite> (not necesarily aligned)
+and the <cite>real_alignments</cite> for that documents train the YalignModel
+instance to maximize the target F-measure (the quality measure).</p>
+<p><cite>real_alignments</cite> is a list of indexes (i, j) of <cite>document_a</cite> and
+<cite>document_b</cite> respectively indicating that those sentences are aligned.
+Pairs not included in <cite>real_alignments</cite> are assumed to be wrong
+alignments.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="yalign.yalignmodel.YalignModel.save">
+<code class="descname">save</code><span class="sig-paren">(</span><em>model_directory</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/yalignmodel.html#YalignModel.save"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.yalignmodel.YalignModel.save" title="Permalink to this definition">¶</a></dt>
+<dd><p>Store a serialization of a YalignModel instance in a given folder.
+Metadata is stored in a separate file.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="yalign.yalignmodel.YalignModel.sentence_pair_score">
+<code class="descname">sentence_pair_score</code><a class="headerlink" href="#yalign.yalignmodel.YalignModel.sentence_pair_score" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="yalign.yalignmodel.YalignModel.word_pair_score">
+<code class="descname">word_pair_score</code><a class="headerlink" href="#yalign.yalignmodel.YalignModel.word_pair_score" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="yalign.yalignmodel.apply_threshold">
+<code class="descclassname">yalign.yalignmodel.</code><code class="descname">apply_threshold</code><span class="sig-paren">(</span><em>alignments</em>, <em>threshold</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/yalignmodel.html#apply_threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.yalignmodel.apply_threshold" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="yalign.yalignmodel.basic_model">
+<code class="descclassname">yalign.yalignmodel.</code><code class="descname">basic_model</code><span class="sig-paren">(</span><em>corpus_filepath</em>, <em>word_scores_filepath</em>, <em>lang_a=None</em>, <em>lang_b=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/yalignmodel.html#basic_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.yalignmodel.basic_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates and trains a <cite>YalignModel</cite> with the basic configuration and
+default values.</p>
+<p><cite>corpus_filepath</cite> is the path to a parallel corpus used for training,
+it can be:</p>
+<blockquote>
+<div><ul class="simple">
+<li>a csv file with two sentences and alignement information, or</li>
+<li>a tmx file with correct alignments (a regular parallel corpus), or</li>
+<li>a text file with interleaved sentences (one line in language A, the
+next in language B)</li>
+</ul>
+</div></blockquote>
+<p><cite>word_scores_filepath</cite> is the path to a csv file (possibly gzipped) with
+word dictionary data. (for ex. &#8220;house,casa,0.91&#8221;).</p>
+<p><cite>lang_a</cite> and <cite>lang_b</cite> are requiered for the tokenizer in the case of a tmx
+file. In the other cases is not necesary because it&#8217;s assumed that the
+words are already tokenized.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="yalign.yalignmodel.best_threshold">
+<code class="descclassname">yalign.yalignmodel.</code><code class="descname">best_threshold</code><span class="sig-paren">(</span><em>real_alignments</em>, <em>predicted_alignments</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/yalignmodel.html#best_threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.yalignmodel.best_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the best F score and threshold value for this gap_penalty</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="yalign.yalignmodel.pre_filter_alignments">
+<code class="descclassname">yalign.yalignmodel.</code><code class="descname">pre_filter_alignments</code><span class="sig-paren">(</span><em>alignments</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/yalignmodel.html#pre_filter_alignments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.yalignmodel.pre_filter_alignments" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="yalign.yalignmodel.random_sampling_maximizer">
+<code class="descclassname">yalign.yalignmodel.</code><code class="descname">random_sampling_maximizer</code><span class="sig-paren">(</span><em>F</em>, <em>min_</em>, <em>max_</em>, <em>n=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/yalignmodel.html#random_sampling_maximizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.yalignmodel.random_sampling_maximizer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="yalign.yalignmodel.score_with_best_threshold">
+<code class="descclassname">yalign.yalignmodel.</code><code class="descname">score_with_best_threshold</code><span class="sig-paren">(</span><em>aligner</em>, <em>xs</em>, <em>ys</em>, <em>gap_penalty</em>, <em>real_alignments</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/yalignmodel.html#score_with_best_threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.yalignmodel.score_with_best_threshold" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="wordpairscore.html"
+                        title="previous chapter">Word Pair Score</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/yalignmodel.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="wordpairscore.html" title="Word Pair Score"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" >Library Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013, Gonzalo García Berrotarán, Rafael Carrascosa, Andrew Vine.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
+    </div>
+  </body>
+</html>

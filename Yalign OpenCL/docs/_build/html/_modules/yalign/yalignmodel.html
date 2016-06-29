@@ -1,0 +1,346 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>yalign.yalignmodel &mdash; Yalign 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="Yalign 0.1.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for yalign.yalignmodel</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">cPickle</span> <span class="kn">as</span> <span class="nn">pickle</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">pickle</span>
+
+<span class="kn">from</span> <span class="nn">yalign.evaluation</span> <span class="kn">import</span> <span class="n">F_score</span>
+<span class="kn">from</span> <span class="nn">yalign.wordpairscore</span> <span class="kn">import</span> <span class="n">WordPairScore</span>
+<span class="kn">from</span> <span class="nn">yalign.sequencealigner</span> <span class="kn">import</span> <span class="n">SequenceAligner</span>
+<span class="kn">from</span> <span class="nn">yalign.sequencealignernew</span> <span class="kn">import</span> <span class="n">SequenceAlignerNW</span>
+<span class="kn">from</span> <span class="nn">yalign.sequencealignernwgpu</span> <span class="kn">import</span> <span class="n">SequenceAlignerNWGPU</span>
+<span class="kn">from</span> <span class="nn">yalign.sentencepairscore</span> <span class="kn">import</span> <span class="n">SentencePairScore</span>
+<span class="kn">from</span> <span class="nn">yalign.input_conversion</span> <span class="kn">import</span> <span class="n">tmx_file_to_documents</span><span class="p">,</span> \
+    <span class="n">parallel_corpus_to_documents</span>
+<span class="kn">from</span> <span class="nn">yalign.train_data_generation</span> <span class="kn">import</span> <span class="n">training_alignments_from_documents</span><span class="p">,</span> \
+                                         <span class="n">training_scrambling_from_documents</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="n">OPTIMIZE_SAMPLE_SET_SIZE</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">RANDOM_SAMPLING_ITERATIONS</span> <span class="o">=</span> <span class="mi">20</span>
+
+
+<div class="viewcode-block" id="basic_model"><a class="viewcode-back" href="../../yalignmodel.html#yalign.yalignmodel.basic_model">[docs]</a><span class="k">def</span> <span class="nf">basic_model</span><span class="p">(</span><span class="n">corpus_filepath</span><span class="p">,</span> <span class="n">word_scores_filepath</span><span class="p">,</span>
+                <span class="n">lang_a</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">lang_b</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates and trains a `YalignModel` with the basic configuration and</span>
+<span class="sd">    default values.</span>
+
+<span class="sd">    `corpus_filepath` is the path to a parallel corpus used for training,</span>
+<span class="sd">    it can be:</span>
+<span class="sd">        - a csv file with two sentences and alignement information, or</span>
+<span class="sd">        - a tmx file with correct alignments (a regular parallel corpus), or</span>
+<span class="sd">        - a text file with interleaved sentences (one line in language A, the</span>
+<span class="sd">          next in language B)</span>
+
+<span class="sd">    `word_scores_filepath` is the path to a csv file (possibly gzipped) with</span>
+<span class="sd">    word dictionary data. (for ex. &quot;house,casa,0.91&quot;).</span>
+
+<span class="sd">    `lang_a` and `lang_b` are requiered for the tokenizer in the case of a tmx</span>
+<span class="sd">    file. In the other cases is not necesary because it&#39;s assumed that the</span>
+<span class="sd">    words are already tokenized.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Word score</span>
+    <span class="n">word_pair_score</span> <span class="o">=</span> <span class="n">WordPairScore</span><span class="p">(</span><span class="n">word_scores_filepath</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">corpus_filepath</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.tmx&quot;</span><span class="p">):</span>
+        <span class="n">A</span><span class="p">,</span> <span class="n">B</span> <span class="o">=</span> <span class="n">tmx_file_to_documents</span><span class="p">(</span><span class="n">corpus_filepath</span><span class="p">,</span> <span class="n">lang_a</span><span class="p">,</span> <span class="n">lang_b</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">A</span><span class="p">,</span> <span class="n">B</span> <span class="o">=</span> <span class="n">parallel_corpus_to_documents</span><span class="p">(</span><span class="n">corpus_filepath</span><span class="p">)</span>
+    <span class="n">alignments</span> <span class="o">=</span> <span class="n">training_alignments_from_documents</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">)</span>
+
+    <span class="n">sentence_pair_score</span> <span class="o">=</span> <span class="n">SentencePairScore</span><span class="p">()</span>
+    <span class="n">sentence_pair_score</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">alignments</span><span class="p">,</span> <span class="n">word_pair_score</span><span class="p">)</span>
+    <span class="c1"># Yalign model</span>
+    <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;lang_a&quot;</span><span class="p">:</span> <span class="n">lang_a</span><span class="p">,</span> <span class="s2">&quot;lang_b&quot;</span><span class="p">:</span> <span class="n">lang_b</span><span class="p">}</span>
+    <span class="n">gap_penalty</span> <span class="o">=</span> <span class="mf">0.49</span>
+    <span class="n">threshold</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">document_aligner</span> <span class="o">=</span> <span class="n">SequenceAligner</span><span class="p">(</span><span class="n">sentence_pair_score</span><span class="p">,</span> <span class="n">gap_penalty</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">YalignModel</span><span class="p">(</span><span class="n">document_aligner</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
+    <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">correct</span> <span class="o">=</span> <span class="n">training_scrambling_from_documents</span><span class="p">(</span><span class="n">A</span><span class="p">[:</span><span class="n">OPTIMIZE_SAMPLE_SET_SIZE</span><span class="p">],</span> <span class="n">B</span><span class="p">[:</span><span class="n">OPTIMIZE_SAMPLE_SET_SIZE</span><span class="p">])</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">optimize_gap_penalty_and_threshold</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">correct</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">model</span></div>
+
+
+<div class="viewcode-block" id="YalignModel"><a class="viewcode-back" href="../../yalignmodel.html#yalign.yalignmodel.YalignModel">[docs]</a><span class="k">class</span> <span class="nc">YalignModel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Main Yalign class.</span>
+<span class="sd">    It provides methods to train a alignment model, to load a model from a</span>
+<span class="sd">    folder and to align two documents.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document_pair_aligner</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                       <span class="n">threshold</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Barebones instantiation method. If no argument is supplied the instance</span>
+<span class="sd">        created is not suited to align documents.</span>
+
+<span class="sd">        To train, you better check `basic_model` first. To use an existing</span>
+<span class="sd">        model better check `YalignModel.load` first.</span>
+
+<span class="sd">        `document_pair_aligner` is a `SequenceAligner` instance capable of</span>
+<span class="sd">        aligning `Sentence`s.</span>
+
+<span class="sd">        `threshold` is a number such that only `Sentence`s scoring lower</span>
+<span class="sd">        than this number (lower is better) are returned by `align`.</span>
+
+<span class="sd">        `metadata` is a `dict` that can be used to store any data that the</span>
+<span class="sd">        user of `YalignModel` considers useful (for instance the languages</span>
+<span class="sd">        that the model accepts). Metadata will be also saved as a json file</span>
+<span class="sd">        along with the model serialization, allowing faster retrieval of</span>
+<span class="sd">        metadata (because is no necesary to load the whole model) for any other</span>
+<span class="sd">        user software.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">document_pair_aligner</span> <span class="o">=</span> <span class="n">document_pair_aligner</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span> <span class="o">=</span> <span class="n">MetadataHelper</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">document_pair_aligner_nw</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;old&#39;</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="YalignModel.load"><a class="viewcode-back" href="../../yalignmodel.html#yalign.yalignmodel.YalignModel.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">model_directory</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method to loads an existing YalignModel from the path to the</span>
+<span class="sd">        folder where it&#39;s contained.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">cls</span><span class="p">()</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_directory</span><span class="p">,</span> <span class="s2">&quot;metadata.json&quot;</span><span class="p">)</span>
+        <span class="n">aligner</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_directory</span><span class="p">,</span> <span class="s2">&quot;aligner.pickle&quot;</span><span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">metadata</span><span class="p">)))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">document_pair_aligner</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">aligner</span><span class="p">))</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">document_pair_aligner</span><span class="o">.</span><span class="n">penalty</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">penalty</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">threshold</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;new&#39;</span> <span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">document_pair_aligner_nw</span> <span class="o">=</span> <span class="n">SequenceAlignerNW</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">document_pair_aligner</span><span class="o">.</span><span class="n">score</span> <span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">threshold</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;gpu&#39;</span> <span class="p">:</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">document_pair_aligner_gpu</span> <span class="o">=</span> <span class="n">SequenceAlignerNWGPU</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">document_pair_aligner</span><span class="o">.</span><span class="n">score</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">threshold</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">model</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">sentence_pair_score</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">document_pair_aligner</span><span class="o">.</span><span class="n">score</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">word_pair_score</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sentence_pair_score</span><span class="o">.</span><span class="n">word_pair_score</span>
+
+<div class="viewcode-block" id="YalignModel.align"><a class="viewcode-back" href="../../yalignmodel.html#yalign.yalignmodel.YalignModel.align">[docs]</a>    <span class="k">def</span> <span class="nf">align</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document_a</span><span class="p">,</span> <span class="n">document_b</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Try to detect aligned sentences from the comparable documents</span>
+<span class="sd">        `document_a` and `document_b`.</span>
+<span class="sd">        The returned alignments are expected to meet the F-measure for which</span>
+<span class="sd">        the model was trained for.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">alignments</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;new&#39;</span> <span class="p">:</span>
+            <span class="n">alignments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">document_pair_aligner_nw</span><span class="p">(</span><span class="n">document_a</span><span class="p">,</span> <span class="n">document_b</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;old&#39;</span><span class="p">:</span>
+            <span class="n">alignments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">align_indexes</span><span class="p">(</span><span class="n">document_a</span><span class="p">,</span> <span class="n">document_b</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;gpu&#39;</span><span class="p">:</span>
+            <span class="n">alignments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">document_pair_aligner_gpu</span><span class="p">(</span><span class="n">document_a</span><span class="p">,</span> <span class="n">document_b</span><span class="p">)</span>
+
+
+        <span class="k">return</span> <span class="p">[(</span><span class="n">document_a</span><span class="p">[</span><span class="n">a</span><span class="p">],</span> <span class="n">document_b</span><span class="p">[</span><span class="n">b</span><span class="p">])</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">alignments</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="YalignModel.align_indexes"><a class="viewcode-back" href="../../yalignmodel.html#yalign.yalignmodel.YalignModel.align_indexes">[docs]</a>    <span class="k">def</span> <span class="nf">align_indexes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document_a</span><span class="p">,</span> <span class="n">document_b</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Same as `align` but returning indexes in documents instead of</span>
+<span class="sd">        sentences.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">alignments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">document_pair_aligner</span><span class="p">(</span><span class="n">document_a</span><span class="p">,</span> <span class="n">document_b</span><span class="p">)</span>
+        <span class="n">alignments</span> <span class="o">=</span> <span class="n">pre_filter_alignments</span><span class="p">(</span><span class="n">alignments</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">apply_threshold</span><span class="p">(</span><span class="n">alignments</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="YalignModel.save"><a class="viewcode-back" href="../../yalignmodel.html#yalign.yalignmodel.YalignModel.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_directory</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Store a serialization of a YalignModel instance in a given folder.</span>
+<span class="sd">        Metadata is stored in a separate file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_directory</span><span class="p">,</span> <span class="s2">&quot;metadata.json&quot;</span><span class="p">)</span>
+        <span class="n">aligner</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">model_directory</span><span class="p">,</span> <span class="s2">&quot;aligner.pickle&quot;</span><span class="p">)</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">document_pair_aligner</span><span class="p">,</span> <span class="nb">open</span><span class="p">(</span><span class="n">aligner</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">penalty</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">document_pair_aligner</span><span class="o">.</span><span class="n">penalty</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="p">),</span> <span class="nb">open</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">),</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="YalignModel.optimize_gap_penalty_and_threshold"><a class="viewcode-back" href="../../yalignmodel.html#yalign.yalignmodel.YalignModel.optimize_gap_penalty_and_threshold">[docs]</a>    <span class="k">def</span> <span class="nf">optimize_gap_penalty_and_threshold</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">document_a</span><span class="p">,</span> <span class="n">document_b</span><span class="p">,</span>
+                                                              <span class="n">real_alignments</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given documents `document_a` and `document_b` (not necesarily aligned)</span>
+<span class="sd">        and the `real_alignments` for that documents train the YalignModel</span>
+<span class="sd">        instance to maximize the target F-measure (the quality measure).</span>
+
+<span class="sd">        `real_alignments` is a list of indexes (i, j) of `document_a` and</span>
+<span class="sd">        `document_b` respectively indicating that those sentences are aligned.</span>
+<span class="sd">        Pairs not included in `real_alignments` are assumed to be wrong</span>
+<span class="sd">        alignments.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">F</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">score_with_best_threshold</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">document_pair_aligner</span><span class="p">,</span>
+                                             <span class="n">document_a</span><span class="p">,</span> <span class="n">document_b</span><span class="p">,</span>
+                                             <span class="n">x</span><span class="p">,</span>
+                                             <span class="n">real_alignments</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">gap_penalty</span> <span class="o">=</span> <span class="n">random_sampling_maximizer</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">document_pair_aligner</span><span class="o">.</span><span class="n">penalty</span> <span class="o">=</span> <span class="n">gap_penalty</span>
+        <span class="n">alignments</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">document_pair_aligner</span><span class="p">(</span><span class="n">document_a</span><span class="p">,</span> <span class="n">document_b</span><span class="p">)</span>
+        <span class="n">alignments</span> <span class="o">=</span> <span class="n">pre_filter_alignments</span><span class="p">(</span><span class="n">alignments</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">threshold</span> <span class="o">=</span> <span class="n">best_threshold</span><span class="p">(</span><span class="n">real_alignments</span><span class="p">,</span> <span class="n">alignments</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span></div></div>
+
+
+<div class="viewcode-block" id="MetadataHelper"><a class="viewcode-back" href="../../yalignmodel.html#yalign.yalignmodel.MetadataHelper">[docs]</a><span class="k">class</span> <span class="nc">MetadataHelper</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">metadata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid metadata initial values&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;No attribute by that name: &#39;{}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+
+
+<div class="viewcode-block" id="pre_filter_alignments"><a class="viewcode-back" href="../../yalignmodel.html#yalign.yalignmodel.pre_filter_alignments">[docs]</a><span class="k">def</span> <span class="nf">pre_filter_alignments</span><span class="p">(</span><span class="n">alignments</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">alignments</span> <span class="k">if</span> <span class="n">a</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span>
+                                                   <span class="n">b</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="apply_threshold"><a class="viewcode-back" href="../../yalignmodel.html#yalign.yalignmodel.apply_threshold">[docs]</a><span class="k">def</span> <span class="nf">apply_threshold</span><span class="p">(</span><span class="n">alignments</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">alignments</span> <span class="k">if</span> <span class="n">c</span> <span class="o">&lt;=</span> <span class="n">threshold</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="best_threshold"><a class="viewcode-back" href="../../yalignmodel.html#yalign.yalignmodel.best_threshold">[docs]</a><span class="k">def</span> <span class="nf">best_threshold</span><span class="p">(</span><span class="n">real_alignments</span><span class="p">,</span> <span class="n">predicted_alignments</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns the best F score and threshold value for this gap_penalty&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">predicted_alignments</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;predicted_alignments cannot be empty&quot;</span><span class="p">)</span>
+    <span class="n">best</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">None</span>
+    <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">threshold</span> <span class="ow">in</span> <span class="n">predicted_alignments</span><span class="p">:</span>
+        <span class="n">xs</span> <span class="o">=</span> <span class="n">apply_threshold</span><span class="p">(</span><span class="n">predicted_alignments</span><span class="p">,</span> <span class="n">threshold</span><span class="p">)</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="n">F_score</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">real_alignments</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;</span> <span class="n">best</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">best</span> <span class="o">=</span> <span class="n">score</span><span class="p">,</span> <span class="n">threshold</span>
+    <span class="k">return</span> <span class="n">best</span></div>
+
+
+<div class="viewcode-block" id="score_with_best_threshold"><a class="viewcode-back" href="../../yalignmodel.html#yalign.yalignmodel.score_with_best_threshold">[docs]</a><span class="k">def</span> <span class="nf">score_with_best_threshold</span><span class="p">(</span><span class="n">aligner</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">gap_penalty</span><span class="p">,</span> <span class="n">real_alignments</span><span class="p">):</span>
+    <span class="n">predicted_alignments</span> <span class="o">=</span> <span class="n">aligner</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">penalty</span><span class="o">=</span><span class="n">gap_penalty</span><span class="p">)</span>
+    <span class="n">predicted_alignments</span> <span class="o">=</span> <span class="n">pre_filter_alignments</span><span class="p">(</span><span class="n">predicted_alignments</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">predicted_alignments</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="n">score</span><span class="p">,</span> <span class="n">threshold</span> <span class="o">=</span> <span class="n">best_threshold</span><span class="p">(</span><span class="n">real_alignments</span><span class="p">,</span> <span class="n">predicted_alignments</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">score</span></div>
+
+
+<div class="viewcode-block" id="random_sampling_maximizer"><a class="viewcode-back" href="../../yalignmodel.html#yalign.yalignmodel.random_sampling_maximizer">[docs]</a><span class="k">def</span> <span class="nf">random_sampling_maximizer</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">min_</span><span class="p">,</span> <span class="n">max_</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">RANDOM_SAMPLING_ITERATIONS</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;n must be 1 or more&quot;</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">min_</span><span class="p">,</span> <span class="n">max_</span><span class="p">)</span>
+    <span class="n">best</span> <span class="o">=</span> <span class="n">F</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">x</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">min_</span><span class="p">,</span> <span class="n">max_</span><span class="p">)</span>
+        <span class="n">score</span> <span class="o">=</span> <span class="n">F</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;</span> <span class="n">best</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">best</span> <span class="o">=</span> <span class="n">score</span><span class="p">,</span> <span class="n">x</span>
+    <span class="k">return</span> <span class="n">best</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013, Gonzalo García Berrotarán, Rafael Carrascosa, Andrew Vine.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
+    </div>
+  </body>
+</html>

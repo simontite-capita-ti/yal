@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Datatypes &mdash; Yalign 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Yalign 0.1.1 documentation" href="index.html" />
+    <link rel="up" title="Library Reference" href="reference.html" />
+    <link rel="next" title="Evaluation" href="evaluation.html" />
+    <link rel="prev" title="Main API" href="yalign.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="evaluation.html" title="Evaluation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="yalign.html" title="Main API"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" accesskey="U">Library Reference</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="module-yalign.datatypes">
+<span id="datatypes"></span><h1>Datatypes<a class="headerlink" href="#module-yalign.datatypes" title="Permalink to this headline">¶</a></h1>
+<p>Module of some basic data types.</p>
+<dl class="class">
+<dt id="yalign.datatypes.ScoreFunction">
+<em class="property">class </em><code class="descclassname">yalign.datatypes.</code><code class="descname">ScoreFunction</code><span class="sig-paren">(</span><em>min_bound</em>, <em>max_bound</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/datatypes.html#ScoreFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.datatypes.ScoreFunction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Abstract Base class for callable objects that provide a real value score.
+The min_bound and max_bound are used to assert the score range.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="yalign.datatypes.Sentence">
+<em class="property">class </em><code class="descclassname">yalign.datatypes.</code><code class="descname">Sentence</code><span class="sig-paren">(</span><em>iterable=None</em>, <em>text=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/datatypes.html#Sentence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.datatypes.Sentence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">list</span></code></p>
+<dl class="method">
+<dt id="yalign.datatypes.Sentence.check_is_tokenized">
+<code class="descname">check_is_tokenized</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/datatypes.html#Sentence.check_is_tokenized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.datatypes.Sentence.check_is_tokenized" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="yalign.datatypes.Sentence.to_text">
+<code class="descname">to_text</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/datatypes.html#Sentence.to_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.datatypes.Sentence.to_text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="yalign.datatypes.SentencePair">
+<em class="property">class </em><code class="descclassname">yalign.datatypes.</code><code class="descname">SentencePair</code><span class="sig-paren">(</span><em>sentence_a</em>, <em>sentence_b</em>, <em>aligned=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/yalign/datatypes.html#SentencePair"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#yalign.datatypes.SentencePair" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">list</span></code></p>
+<p>An association of two sentences with one attribute
+to indicate if they are considered aligned.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="yalign.html"
+                        title="previous chapter">Main API</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="evaluation.html"
+                        title="next chapter">Evaluation</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/datatypes.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="evaluation.html" title="Evaluation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="yalign.html" title="Main API"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Yalign 0.1.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="reference.html" >Library Reference</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013, Gonzalo García Berrotarán, Rafael Carrascosa, Andrew Vine.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
+    </div>
+  </body>
+</html>

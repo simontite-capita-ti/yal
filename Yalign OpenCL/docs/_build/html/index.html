@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Yalign &mdash; Yalign 0.1.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Yalign 0.1.1 documentation" href="#" />
+    <link rel="next" title="Installation" href="installation.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             accesskey="N">next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">Yalign 0.1.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="yalign">
+<h1>Yalign<a class="headerlink" href="#yalign" title="Permalink to this headline">¶</a></h1>
+<p>Yalign is a tool for extracting parallel sentences from comparable corpora.</p>
+<p><a class="reference external" href="http://en.wikipedia.org/wiki/Statistical_machine_translation">Statistical Machine Translation</a> relies on <a class="reference external" href="http://en.wikipedia.org/wiki/Parallel_text">parallel corpora</a> (eg.. <a class="reference external" href="http://www.statmt.org/europarl/">europarl</a>) for training translation models. However these corpora are limited and take time to create. Yalign is designed to automate this process by finding sentences that are close translation matches from <a class="reference external" href="http://www.statmt.org/survey/Topic/ComparableCorpora">comparable corpora</a>. This opens up avenues for harvesting parallel corpora from sources like translated documents and the web.</p>
+</div>
+<div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>Yalign requires that you install <a class="reference external" href="http://scikit-learn.org/stable/install.html">scikit-learn</a>.</p>
+<p>After that you can install Yalign from PyPi via pip:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">yalign</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<p>Firstly we need to download and unpack the english to spanish model.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">wget</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">yalign</span><span class="o">.</span><span class="n">machinalis</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">models</span><span class="o">/</span><span class="mf">0.1</span><span class="o">/</span><span class="n">en</span><span class="o">-</span><span class="n">es</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+<span class="n">tar</span> <span class="o">-</span><span class="n">xvzf</span> <span class="n">en</span><span class="o">-</span><span class="n">es</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+</pre></div>
+</div>
+<p>Now we can use the <strong>yalign-align</strong> script along with the english to spanish model to align two web pages.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">yalign</span><span class="o">-</span><span class="n">align</span> <span class="n">en</span><span class="o">-</span><span class="n">es</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">en</span><span class="o">.</span><span class="n">wikipedia</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">wiki</span><span class="o">/</span><span class="n">Antiparticle</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">es</span><span class="o">.</span><span class="n">wikipedia</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">wiki</span><span class="o">/</span><span class="n">Antipart</span><span class="o">%</span><span class="n">C3</span><span class="o">%</span><span class="n">ADcula</span>
+</pre></div>
+</div>
+<p>Yalign is not limited to any one language pair. By creating your own models you can align any two languages.</p>
+</div>
+<div class="section" id="demo">
+<h1>Demo<a class="headerlink" href="#demo" title="Permalink to this headline">¶</a></h1>
+<p>See <strong>yalign</strong> in action <a class="reference external" href="http://yalign.machinalis.com/demo">right here</a>.</p>
+</div>
+<div class="section" id="contents">
+<h1>Contents:<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installing-from-pypi">Installing From PyPi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installing-from-source">Installing From source</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#create-a-model">Create A Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorial.html#align-two-documents">Align Two Documents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="implementation.html">Implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference.html">Library Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="yalign.html">Main API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datatypes.html">Datatypes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evaluation.html">Evaluation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="input_conversion.html">Input Conversion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sentencepairscore.html">Sentence Pair Score</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sequencealigner.html">Sequence Aligner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svm.html">SVM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tokenizers.html">Tokenizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="train_data_generation.html">Train Data Generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="utils.html">Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wordpairscore.html">Word Pair Score</a></li>
+<li class="toctree-l2"><a class="reference internal" href="yalignmodel.html">Yalign Model</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>Yalign is a <a class="reference external" href="http://www.machinalis.com">Machinalis</a> project.
+You can view our other open source contributions <a class="reference external" href="https://github.com/machinalis/">here</a>.</p>
+<p><strong>The Yalign Team:</strong></p>
+<div class="line-block">
+<div class="line">Laura Alonso Alemany</div>
+<div class="line">Elías Andrawos</div>
+<div class="line">Rafael Carrascosa</div>
+<div class="line">Gonzalo García Berrotarán</div>
+<div class="line">Andrew Vine</div>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Yalign</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#usage">Usage</a></li>
+<li><a class="reference internal" href="#demo">Demo</a></li>
+<li><a class="reference internal" href="#contents">Contents:</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  <h4>Next topic</h4>
+  <p class="topless"><a href="installation.html"
+                        title="next chapter">Installation</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="installation.html" title="Installation"
+             >next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">Yalign 0.1.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2013, Gonzalo García Berrotarán, Rafael Carrascosa, Andrew Vine.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.4.
+    </div>
+  </body>
+</html>

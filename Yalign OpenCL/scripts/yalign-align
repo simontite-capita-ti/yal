@@ -48,8 +48,8 @@ def read_document(filename, language):
         return html_to_document(text, language)
     return text_to_document(text, language)
 
-
 def write_plaintext(stream, pairs):
+    assert isinstance(pairs, object)
     for a, b in pairs:
         stream.write(a.to_text())
         stream.write('\n')
@@ -74,8 +74,3 @@ if __name__ == "__main__":
         write_tmx(stdout, pairs, lang_a, lang_b)
     else:
         write_plaintext(stdout, pairs)
-    
-
-#    print("--- %s seconds ---" % (time.time() - start_time))
-
-
