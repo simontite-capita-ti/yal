@@ -3,10 +3,24 @@
 """
 Evaluate how many alignments are found from a document pair.
 
-Usage:
-    yalign-evaluate-alignment <parallel-corpus> <model>
-"""
+Inputs:
+    model_folder: The directory where a trained model is kept.
+    document_a, document_b: The files or urls for the alignment.
 
+Output:
+    The output is written to stdout.
+
+Usage:
+    yalign-evaluate-alignment [options] <parallel-corpus> <model>
+
+Options:
+  -h --help                             Show this screen.
+  -m --mode=<mode>                      Running mode [default: old]
+                                        Running mode can be one of three options.
+                                        old === using original alignment algorithm.
+                                        new === using Needleman Wunsch algorithm.
+                                        gpu === using Needleman Wunsch algorithm accelerated by GPU.
+"""
 from docopt import docopt
 from yalign.yalignmodel import YalignModel
 from yalign.evaluation import alignment_percentage
@@ -16,8 +30,10 @@ from yalign.input_conversion import parallel_corpus_to_documents
 if __name__ == "__main__":
     args = docopt(__doc__)
     parallel_corpus = args["<parallel-corpus>"]
+    mode = args['--mode']
     A, B = parallel_corpus_to_documents(parallel_corpus)
     modelpath = args["<model>"]
-    model = YalignModel.load(modelpath)
+
+    model = YalignModel.load(modelpath, mode)
     p = alignment_percentage(A, B, model)
     print "Aligment percentage: {}%".format(p)
