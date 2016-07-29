@@ -59,28 +59,24 @@ def tokenize(text, language="en"):
         raise ValueError("Can only tokenize unicode strings")
     return Sentence(_tokenizers[language].tokenize(text), text=text)
 
+#SJT:20160720:The original yalign source for reference
 #def text_to_document(text, language="en"):
 #    """ Returns string text as list of Sentences """
 #    splitter = _sentence_splitters[language]
 #    utext = unicode(text, 'utf-8') if isinstance(text, str) else text
 #    sentences = splitter.tokenize(utext)
 #    return [tokenize(text, language) for text in sentences]
-def text_to_document(text, language="en"):
 
+def text_to_document(text, language="en"):
     """ Returns string text as list of Sentences """
+
     splitter = _sentence_splitters[language] # type: PunktSentenceTokenizer
     utext = unicode(text, 'utf-8') if isinstance(text, str) else text # type: unicode
 
     #20160720:SJT:Consider sentences to end on newline or cr, whether or not there is a sentence terminator like ".".
     utext = utext.replace(u'\r', u'\n') # type: unicode
     paragraphs = [p for p in utext.split(u'\n') if p]
-    #sentences = [splitter.tokenize(p, language) for p in paragraphs] # this works, bug gives list of lists containing one or more strings
     sentences = list(chain.from_iterable(splitter.tokenize(p, language) for p in paragraphs))
-    #sentences = []
-    #for p in paragraphs:
-        #x = splitter.tokenize(p)
-        #sentences.extend(x)
-    debvar = [tokenize(text, language) for text in sentences]
     return [tokenize(text, language) for text in sentences]
 
 def html_to_document(html, language="en"):
