@@ -60,7 +60,7 @@ def tokenize(text, language="en"):
     return Sentence(_tokenizers[language].tokenize(text), text=text)
 
 #SJT:20160720:The original yalign source for reference
-#def text_to_document(text, language="en"):
+# def text_to_document(text, language="en"):
 #    """ Returns string text as list of Sentences """
 #    splitter = _sentence_splitters[language]
 #    utext = unicode(text, 'utf-8') if isinstance(text, str) else text
