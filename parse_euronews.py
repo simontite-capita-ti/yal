@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Description: Crawles euronews website and extracts article texts
+Description: Crawls euronews website and extracts article texts
 """
 
 from __future__ import division

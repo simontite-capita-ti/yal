@@ -40,8 +40,8 @@ def basic_model(corpus_filepath, word_scores_filepath,
     `word_scores_filepath` is the path to a csv file (possibly gzipped) with
     word dictionary data. (for ex. "house,casa,0.91").
 
-    `lang_a` and `lang_b` are requiered for the tokenizer in the case of a tmx
-    file. In the other cases is not necesary because it's assumed that the
+    `lang_a` and `lang_b` are required for the tokenizer in the case of a tmx
+    file. In the other cases is not necessary because it's assumed that the
     words are already tokenized.
     """
     # Word score
