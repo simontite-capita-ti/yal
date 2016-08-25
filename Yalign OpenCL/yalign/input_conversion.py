@@ -77,7 +77,8 @@ def text_to_document(text, language="en"):
     utext = utext.replace(u'\r', u'\n') # type: unicode
     paragraphs = [p for p in utext.split(u'\n') if p]
     sentences = list(chain.from_iterable(splitter.tokenize(p, language) for p in paragraphs))
-    return [tokenize(text, language) for text in sentences]
+    res = [tokenize(text, language) for text in sentences]
+    return res
 
 def html_to_document(html, language="en"):
     """ Returns html text as list of Sentences """
