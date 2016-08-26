@@ -32,7 +32,7 @@ def basic_model(corpus_filepath, word_scores_filepath,
 
     `corpus_filepath` is the path to a parallel corpus used for training,
     it can be:
-        - a csv file with two sentences and alignement information, or
+        - a csv file with two sentences and alignment information, or
         - a tmx file with correct alignments (a regular parallel corpus), or
         - a text file with interleaved sentences (one line in language A, the
           next in language B)
