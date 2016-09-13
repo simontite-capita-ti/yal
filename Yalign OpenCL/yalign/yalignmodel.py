@@ -145,8 +145,8 @@ class YalignModel(object):
         elif self.mode == 'gpu':
             alignments = self.document_pair_aligner_gpu(document_a, document_b)
 
-
-        return [(document_a[a], document_b[b]) for a, b in alignments]
+        res = [(document_a[a], document_b[b]) for a, b in alignments]
+        return res
 
     def align_indexes(self, document_a, document_b):
         """
