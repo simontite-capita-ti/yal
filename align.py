@@ -10,7 +10,7 @@ from __future__ import print_function
 import argparse
 import logging
 from multiprocessing import cpu_count
-from pc.align import align, align_euronews
+from pc.align import align
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Aligning text using yaling')
@@ -22,13 +22,24 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--source', required=True, help='Sorce of articles for aligning: "wikipedia", "euronews"')
     parser.add_argument('--restart', action='store_true', help='Restart aligner')
     parser.add_argument('-m', '--mode', help='Alignment mode to be used by yalign')
+    parser.add_argument('--hunalign', action='store_true', help='Align using hunalign')
     args = parser.parse_args()
     if args.v:
         logging.basicConfig(level=logging.INFO)
     if args.threads == 0:
         args.threads = cpu_count()
     lang1, lang2 = args.language.split('-')
-    if args.source == 'wikipedia':
-        align(lang1, lang2, args.result, args.size, processes=args.threads, restart=args.restart, mode=args.mode)
-    elif args.source == 'euronews':
-        align_euronews(lang1, lang2, args.result, args.size, processes=args.threads, restart=args.restart, mode=args.mode)
+    method = 'yalign'
+    if args.hunalign:
+        method = 'hunalign'
+    align(
+        args.source,
+        lang1,
+        lang2,
+        args.result,
+        args.size,
+        processes=args.threads,
+        restart=args.restart,
+        mode=args.mode,
+        method=method
+    )

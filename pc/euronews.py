@@ -148,16 +148,16 @@ def get_article_trans(url, langs=None):
                 trans.append((lang, art_url))
         return trans
 
-    log.debug('Getting articles translations for %s', url)
+    log.info('Getting articles translations for %s', url)
     html = get_html(url)
     if html is None:
         return None
     articles = []
     if _need_lang('en'):
-        log.debug('Translation en')
+        log.info('Translation en')
         articles.append(get_article('en', url, html))
     for lang, art_url in _trans(html):
-        log.debug('Translation %s, at %s', lang, art_url)
+        log.info('Translation %s, at %s', lang, art_url)
         html = get_html(art_url)
         if html is None:
             continue

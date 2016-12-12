@@ -61,12 +61,19 @@ def extract_articles(dump_path, lang, debug=False):
         uids = {}
         log.info('Starting')
         log.info('Extracting language links')
-        i = 0
-        for ll in _get_lang_links(dump_path):
-            uid = uids.setdefault((ll.tgt_lang, ll.tgt_title), str(uuid4()))
-            articles[(ll.orig_lang, ll.orig_id)] = uid
-            i += 1
-            if i % 100000 == 0:
+
+        for i, ll in enumerate(_get_lang_links(dump_path)):
+            if (ll.tgt_lang, ll.tgt_title) in uids:
+                uid = uids[(ll.tgt_lang, ll.tgt_title)]
+                articles[(ll.orig_lang, ll.orig_id)] = uid
+            elif (ll.orig_lang, ll.orig_id) in articles:
+                uid = articles[(ll.orig_lang, ll.orig_id)]
+                uids[(ll.tgt_lang, ll.tgt_title)] = uid
+            else:
+                uid = uuid4().hex
+                uids[(ll.tgt_lang, ll.tgt_title)] = uid
+                articles[(ll.orig_lang, ll.orig_id)] = uid
+            if i % 1000 == 0:
                 log.info('Articles count: %s', len(articles))
 
         log.info('Extracting article dumps')
@@ -75,16 +82,17 @@ def extract_articles(dump_path, lang, debug=False):
         dumps.remove(main_dump)
         db = pymongo.MongoClient().corpora
         log.info('Clearing current articles from db')
-        db.articles.remove()
-        db.articles.create_index('uid')
-        db.articles.create_index('lang')
-        db.articles.create_index('done_align')
-        db.articles.create_index([('uid', pymongo.ASCENDING),
+        db.wikipedia.remove()
+        db.wikipedia.create_index('uid')
+        db.wikipedia.create_index('lang')
+        db.wikipedia.create_index('done_align')
+        db.wikipedia.create_index([('uid', pymongo.ASCENDING),
                                   ('lang', pymongo.ASCENDING)])
 
         log.info('Extracting articles for main language')
         arts_to_db = articles.copy()
         i = len(articles)
+        main_uids = set()
         for article in parse_articles(main_dump.lang, main_dump.path):
             try:
                 uid = arts_to_db.pop((article.lang, article.id))
@@ -92,11 +100,15 @@ def extract_articles(dump_path, lang, debug=False):
             except Exception:
                 pass
             else:
-                db.articles.insert(dict(uid=uid, lang=article.lang,
-                                        title=article.title,
-                                        text=text))
+                main_uids.add(uid)
+                db.wikipedia.insert({
+                    'uid': uid,
+                    'lang': article.lang,
+                    'title': article.title,
+                    'text': text
+                })
                 i -= 1
-                if i % 100000 == 0:
+                if i % 1000 == 0:
                     log.info('Left to process: %s', int(len(arts_to_db)/2))
         log.info('Extracting articles for other languages (only if such article exists for main language)')
         for dump in dumps:
@@ -109,12 +121,15 @@ def extract_articles(dump_path, lang, debug=False):
                 except KeyError:
                     pass
                 else:
-                    if db.articles.find_one(dict(uid=uid)):
-                        db.articles.insert(dict(uid=uid, lang=article.lang,
-                                                title=article.title,
-                                                text=clean(article.text)))
+                    if uid in main_uids:
+                        db.wikipedia.insert({
+                            'uid': uid,
+                            'lang': article.lang,
+                            'title': article.title,
+                            'text': clean(article.text)
+                        })
                     i -= 1
-                    if i % 100000 == 0:
+                    if i % 1000 == 0:
                         log.info('Left to process: %s', int(len(arts_to_db)/2))
         log.info('Done')
     except:
@@ -136,13 +151,13 @@ def parse_euronews(start_url, langs, processes):
     log.info('Using %i crawler processes and %i parser processes',
              crawler_processes, parser_processes)
     db = pymongo.MongoClient().corpora
-    db.articles.create_index('lang')
-    db.articles.create_index('uid')
-    db.articles.create_index('done')
-    db.articles.create_index('done_align')
-    db.articles.create_index([('uid', pymongo.ASCENDING),
+    db.euronews.create_index('lang')
+    db.euronews.create_index('uid')
+    db.euronews.create_index('done')
+    db.euronews.create_index('done_align')
+    db.euronews.create_index([('uid', pymongo.ASCENDING),
                               ('lang', pymongo.ASCENDING)])
-    db.articles.create_index([('lang', pymongo.ASCENDING),
+    db.euronews.create_index([('lang', pymongo.ASCENDING),
                               ('done', pymongo.ASCENDING)])
 
     def _crawler():

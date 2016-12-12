@@ -10,12 +10,10 @@ from __future__ import print_function
 import pymongo
 
 if __name__ == '__main__':
-    db = pymongo.MongoClient().corpora
+    db = pymongo.MongoClient()
     if raw_input('Type [yes] to confirm full DB cleanup: ') == 'yes':
         print('Cleaning DB...')
-        db.articles.drop()
-        db.euronews.drop()
-        db.corpora.drop()
+        db.drop_database('corpora')
         print('Done')
     else:
         print('Canceled')

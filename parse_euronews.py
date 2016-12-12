@@ -21,4 +21,5 @@ if __name__ == '__main__':
     if args.v:
         logging.basicConfig(level=logging.INFO)
         logging.getLogger('urllib3').setLevel(logging.ERROR)
+        logging.getLogger('requests').setLevel(logging.ERROR)
     parse_euronews(conf.euronews_start_url, args.langs.split(','), args.threads)
