@@ -173,3 +173,32 @@ for additional parameters you can use '-h' key.
 Then yalign_selection.py script will finish work it will produce csv file, with
 first column equal to threshold, second column equal to penalty, and third is
 similarity for this parameters.
+
+Align with HUNALING method
+----------------
+
+In order to use hunalign you need add "--hunalign" option in align.py script, here is example:
+
+$ python align.py -l li-hu -r align_result -o wikipedia --hunalign
+
+In my empirical study it provides better results when articles are translations of each other or simillar in leghth and content.
+
+Align From fodler
+----------------
+For aligning already aligned texts using hunalign:
+
+Command exmaple is:
+
+$ python align_aligned_using_hunalign.py source/ target/
+
+
+Final info
+=====
+
+Wołk, K., & Marasek, K. (2015, September). Tuned and GPU-accelerated parallel data mining from comparable corpora. In International Conference on Text, Speech, and Dialogue (pp. 32-40). Springer International Publishing.
+
+http://arxiv.org/pdf/1509.08639
+
+For more detailed usage instruction see howto.pdf.
+
+For any questions: | Krzysztof Wolk | krzysztof@wolk.pl
