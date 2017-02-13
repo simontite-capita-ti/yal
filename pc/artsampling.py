@@ -50,7 +50,7 @@ def extract_samples(path, source, count, langs):
     art_ids = []
     query = {'lang': langs[0], 'text': {'$exists': True}}
     log.info('Preparing list of articles')
-    for art in db.find(query, timeout=False):
+    for art in db.find(query, no_cursor_timeout=True):
         art_ids.append(art['uid'])
     random.shuffle(art_ids)
     samples = []

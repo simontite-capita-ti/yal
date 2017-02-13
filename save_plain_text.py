@@ -43,15 +43,12 @@ if __name__ == '__main__':
         if not os.path.exists(lang_path(lang)):
             os.makedirs(lang_path(lang))
     db = pymongo.MongoClient().corpora
-    if args.source == 'wikipedia':
-        collection = db.articles
-    elif args.source == 'euronews':
-        collection = db.euronews
+    collection = db[args.source]
     query = {'text': {'$exists': True}}
     count = 0
     for lang in langs:
         query['lang'] = lang
-        for art in collection.find(query, timeout=False):
+        for art in collection.find(query, no_cursor_timeout=True):
             path = os.path.join(lang_path(lang), secure_filename(art['uid']))
             with codecs.open(path, 'w', encoding='utf-8') as f:
                 f.write(remove_extra_spaces(art['text']))
