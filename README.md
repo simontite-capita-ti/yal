@@ -36,7 +36,7 @@ EN:
   * http://dumps.wikimedia.org/enwiki/latest/enwiki-latest-pages-articles.xml.bz2
   * http://dumps.wikimedia.org/enwiki/latest/enwiki-latest-langlinks.sql.gz
 
-IMPORTANT NOTE: Engilsh dumps after extraction will require about 50 Gb of free
+IMPORTANT NOTE: English dumps after extraction will require about 50 Gb of free
 space. During parsing parser can require up to 8 Gb ram.
 
 Article parser have option "main language" - its language for which articles
@@ -174,20 +174,20 @@ Then yalign_selection.py script will finish work it will produce csv file, with
 first column equal to threshold, second column equal to penalty, and third is
 similarity for this parameters.
 
-Align with HUNALING method
+Align with HUNALIGN method
 ----------------
 
 In order to use hunalign you need add "--hunalign" option in align.py script, here is example:
 
 $ python align.py -l li-hu -r align_result -o wikipedia --hunalign
 
-In my empirical study it provides better results when articles are translations of each other or simillar in leghth and content.
+In my empirical study it provides better results when articles are translations of each other or similar in length and content.
 
-Align From fodler
+Align From folder
 ----------------
 For aligning already aligned texts using hunalign:
 
-Command exmaple is:
+Command example is:
 
 $ python align_aligned_using_hunalign.py source/ target/
 

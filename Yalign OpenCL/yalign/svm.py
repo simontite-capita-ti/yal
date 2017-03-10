@@ -5,6 +5,7 @@ Module for code dealing with the classifier.
 """
 
 import numpy
+import sys
 
 from sklearn import svm
 from simpleai.machine_learning import Classifier
@@ -48,6 +49,7 @@ class SVMClassifier(Classifier):
         """
         self._SVC_hack()
         vector = self._vectorize(data)
+        vector = vector.reshape(1, -1)
         return float(self.svm.decision_function(vector))
 
     def _vectorize(self, data):
